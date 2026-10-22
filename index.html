@@ -70,6 +70,10 @@
   .filters input { flex: 1; min-width: 180px; }
 
   .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(235px, 1fr)); gap: 12px; }
+  .badge-sold { background: #8d6e63; }
+  .goat-photo.sold { background: linear-gradient(135deg, #e6e0d2, #efe9dc); }
+  .goat-photo.sold img { filter: grayscale(.75); opacity: .88; }
+  .count-pill { background: var(--terra); color: #fff; border-radius: 14px; padding: 2px 11px; font-size: 14px; vertical-align: middle; display: inline-block; }
   .goat-card { background: var(--card); border-radius: 14px; overflow: hidden; box-shadow: 0 3px 12px rgba(36,51,24,.1); transition: transform .2s, box-shadow .2s; border: 1px solid var(--border); display: flex; flex-direction: column; }
   .goat-card:hover { transform: translateY(-4px); box-shadow: 0 8px 20px rgba(36,51,24,.18); }
   .goat-photo { height: 128px; background: linear-gradient(135deg, #dce8d4, #eef2e2); display: flex; align-items: center; justify-content: center; font-size: 40px; position: relative; overflow: hidden; }
@@ -213,6 +217,12 @@
     <div id="seller-grid" class="grid"></div>
     <div id="seller-empty" class="empty" style="display:none"><div class="big">🤝</div><span data-i18n="seller_empty">No approved seller listings yet — farmers' submissions appear here after review.</span></div>
 
+    <div id="sold-section" style="display:none">
+      <h2 class="section"><span data-i18n="pub_sold_sec">🏆 Sold Animals</span> <span id="sold-count" class="count-pill">0</span></h2>
+      <div id="sold-grid" class="grid"></div>
+      <div id="sold-empty" class="empty" style="display:none"><div class="big">🏅</div><span data-i18n="sold_empty">Nothing sold under these filters yet.</span></div>
+    </div>
+
     <!-- Contact & location from the business card -->
     <h2 class="section" data-i18n="contact_sec">Contact & Visit Us</h2>
     <div class="stats">
@@ -294,7 +304,7 @@
     <div id="pin-gate" class="pin-gate panel">
       <h2 class="section" style="border:none;padding:0;text-align:center;" data-i18n="admin_title">🔐 Admin Access</h2>
       <p style="color:var(--gray);font-size:14px;" data-i18n="admin_note">Enter the admin PIN to manage goat records and farmer submissions.</p>
-      <input type="password" id="pin-input" maxlength="6" placeholder="••••" onkeydown="if(event.key==='Enter')tryPin()">
+      <input type="password" id="pin-input" maxlength="6" inputmode="numeric" pattern="[0-9]*" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="••••" onkeydown="if(event.key==='Enter')tryPin()">
       <button class="btn btn-primary" style="width:100%" onclick="tryPin()" data-i18n="unlock">Unlock Admin</button>
     </div>
 
@@ -450,11 +460,13 @@ const I18N = {
     my_edit_btn: '✏ Edit', my_editing: '✏ Editing your listing — update details below, then press Update', my_update_btn: '💾 Update My Listing', my_cancel: 'Cancel', toast_my_upd: '✓ Your listing has been updated',
     pin_title: '🔑 Change Admin PIN', pin_current: 'Current PIN', pin_new: 'New PIN (4-6 digits)', pin_save: '💾 Update PIN',
     pin_ok: '✓ Admin PIN updated', pin_wrong_cur: 'Current PIN is incorrect', pin_bad: 'New PIN must be 4-6 digits (and different)',
+    pin_custom_hint: 'This device has its own custom PIN. Enter it, or clear this site\'s data in your browser to reset to 1234.',
     pin_note: 'The PIN is stored on this device only. If you forget it, clear the site data in your browser to return to the default 1234.',
     pic_photo: 'Animal Photo *', pic_cnic: 'CNIC Card Photo *', pic_cnic_opt: 'CNIC Card Photo', pic_add: 'Tap to add', pic_change: 'Change',
     my_note: 'Enter the same phone number you used when submitting your animal. Only approved (live) listings can be marked as sold.',
     breed_choose: 'Choose breed...', breed_other: 'Other (type below)',
     pub_farm_sec: '🏡 M.K Dhadra Farm Stock', pub_seller_sec: '🤝 Seller Listings', seller_empty: 'No approved seller listings yet — farmers\' submissions appear here after review.',
+    pub_sold_sec: '🏆 Sold Animals', sold_empty: 'Nothing sold under these filters yet.',
     male: 'Male', female: 'Female',
     submit_btn: '📨 Submit for Review', clear: 'Clear Form',
     submit_note: 'Submissions are reviewed by the farm admin before appearing on the public site. Buyers will contact you on the number provided.',
@@ -486,6 +498,7 @@ const I18N = {
     call: '📞 کال', wa: '💬 واٹس ایپ',
     empty1: 'اس وقت آپ کے فلٹر پر کوئی بکری پوری نہیں اتری۔', empty2: 'نیا اسٹاک باقاعدگی سے شائع ہوتا ہے — دوبارہ تشریف لائیں۔',
     pub_farm_sec: '🏡 ایم۔کے دھدرا فارم کے جانور', pub_seller_sec: '🤝 کسانوں کی فروخت لسٹیں', seller_empty: 'ابھی کوئی منظور شدہ کسان لسٹیں نہیں — جائزے کے بعد یہاں آئیں گی۔',
+    pub_sold_sec: '🏆 فروخت شدہ جانور', sold_empty: 'انفلترز کے تحت ابھی کج¾ فروخت نÁیں ہوا ہے۔',
     contact_sec: 'رابطہ اور تشریف لائیں', c_gm: 'جنرل مینیجر', c_phone: 'فون / واٹس ایپ', c_addr: 'پتہ',
     farmer_badge: 'کسان ساتھیوں کے لیے', farmer_hero: 'اپنی بکری ہمارے ساتھ فروخت کریں',
     farmer_hero_p: 'اپنا جانور ہمارے پلیٹ فارم پر لسٹ کریں۔ فارم ایڈمن کی منظوری کے بعد عوامی سائٹ پر شائع ہوگا۔',
@@ -503,6 +516,7 @@ const I18N = {
     my_edit_btn: '✏ ترمیم', my_editing: '✏ آپ کی لسٹ کی ترمیم — نیچے تفصیل درست کریں اور اپ ڈیٹ دبائیں', my_update_btn: '💾 میری لسٹ اپ ڈیٹ کریں', my_cancel: 'منسوخ', toast_my_upd: '✓ آپ کی لسٹ اپ ڈیٹ ہو گئی',
     pin_title: '🔑 ایڈمن PIN تبدیل کریں', pin_current: 'موجودہ PIN', pin_new: 'نیا PIN (4-6 ہندسے)', pin_save: '💾 PIN اپ ڈیٹ کریں',
     pin_ok: '✓ ایڈمن PIN تبدیل ہو گیا', pin_wrong_cur: 'موجودہ PIN غلط ہے', pin_bad: 'نیا PIN چار سے چھ ہندسوں کا اور پرانے سے مختلف ہونا چاہیے',
+    pin_custom_hint: 'اس ڈیوائس پر اپنی مرضی کا PIN ہے۔ وہی درج کریں، یا براؤزر میں اس سائٹ کا ڈیٹا صاف کریں — 1234 واپس آ جائے گا۔',
     pin_note: 'PIN صرف اسی ڈیوائس پر محفوظ ہوتا ہے۔ اگر بھول جائیں تو براؤزر کا سائٹ ڈیٹا صاف کریں — پہلے والا 1234 واپس آ جائے گا۔',
     pic_photo: 'جانور کی تصویر *', pic_cnic: 'شناختی کارڈ کی تصویر *', pic_cnic_opt: 'شناختی کارڈ کی تصویر', pic_add: 'تصویر لگائیں', pic_change: 'تبدیل کریں',
     my_note: 'جمع کروانے کے وقت والا وہی فون نمبر لکھیں۔ صرف منظور شدہ (لائیو) لسٹیں فروخت شدہ کی جا سکتی ہیں۔',
@@ -618,11 +632,17 @@ function switchTab(tab) {
 /* ============ PIN ============ */
 function currentPin() { return localStorage.getItem('dhadra_admin_pin') || ADMIN_PIN; }
 function tryPin() {
-  if (document.getElementById('pin-input').value === currentPin()) {
+  const entered = String(document.getElementById('pin-input').value || '').replace(/\s/g, '');
+  const devicePin = currentPin();
+  if (entered === devicePin) {
     adminUnlocked = true;
     document.getElementById('pin-gate').style.display = 'none';
     document.getElementById('admin-content').style.display = 'block';
+    document.getElementById('pin-input').value = '';
     renderAll();
+  } else if (entered === ADMIN_PIN && devicePin !== ADMIN_PIN) {
+    // helpful hint: this device has a custom PIN (set on this device only)
+    toast(t('pin_custom_hint'));
   } else { toast(t('toast_pin')); }
 }
 function changeAdminPin() {
@@ -650,8 +670,8 @@ function waLink(g) {
 }
 
 /* ============ PUBLIC RENDER (segregated) ============ */
-function prepList(raw, q, breed, gender, sort) {
-  let list = raw.filter(r => r.status === 'released');
+function prepList(raw, q, breed, gender, sort, status) {
+  let list = raw.filter(r => r.status === (status || 'released'));
   if (q) list = list.filter(r => (r.name + ' ' + r.tag).toLowerCase().includes(q));
   if (breed) list = list.filter(r => r.breed === breed);
   if (gender) list = list.filter(r => r.gender === gender);
@@ -661,13 +681,16 @@ function prepList(raw, q, breed, gender, sort) {
   else list.sort((a, b) => (b.created || 0) - (a.created || 0));
   return list;
 }
-function goatCard(g) {
+function goatCard(g, sold) {
   const card = document.createElement('div');
   card.className = 'goat-card';
   const photo = g.photo ? '<img src="' + g.photo + '" alt="' + esc(g.name) + '">' : '🐐';
   const seller = (g.source === 'seller' && g.farmerName) ? (t('seller_by') + ' ' + esc(g.farmerName)) : t('seller_farm');
+  const badge = sold
+    ? '<span class="status-badge badge-sold">' + t('sold_l') + '</span>'
+    : '<span class="status-badge badge-available">' + t('available') + '</span>';
   card.innerHTML =
-    '<div class="goat-photo">' + photo + '<span class="status-badge badge-available">' + t('available') + '</span><span class="seller-tag">' + seller + '</span></div>' +
+    '<div class="goat-photo' + (sold ? ' sold' : '') + '">' + photo + badge + '<span class="seller-tag">' + seller + '</span></div>' +
     '<div class="goat-body">' +
       '<h3>' + esc(g.name) + ' <span style="font-weight:400;color:var(--gray)">(' + esc(g.tag) + ')</span>' +
         '<a class="wa-inline" target="_blank" href="' + waLink(g) + '" title="WhatsApp">💬</a></h3>' +
@@ -682,12 +705,12 @@ function goatCard(g) {
     '</div>';
   return card;
 }
-function renderCardGrid(list, gridId, emptyId) {
+function renderCardGrid(list, gridId, emptyId, sold) {
   const grid = document.getElementById(gridId);
   const empty = document.getElementById(emptyId);
   grid.innerHTML = '';
   empty.style.display = list.length ? 'none' : 'block';
-  list.forEach(g => grid.appendChild(goatCard(g)));
+  list.forEach(g => grid.appendChild(goatCard(g, sold)));
 }
 function renderPublic() {
   const q = document.getElementById('pub-search').value.toLowerCase();
@@ -696,6 +719,10 @@ function renderPublic() {
   const sort = document.getElementById('pub-sort').value;
   renderCardGrid(prepList(getFarmRecords(), q, breed, gender, sort), 'public-grid', 'public-empty');
   renderCardGrid(prepList(getSellerRecords(), q, breed, gender, sort), 'seller-grid', 'seller-empty');
+  const sold = prepList(getFarmRecords(), q, breed, gender, sort, 'sold').concat(prepList(getSellerRecords(), q, breed, gender, sort, 'sold'));
+  document.getElementById('sold-section').style.display = sold.length ? 'block' : 'none';
+  document.getElementById('sold-count').textContent = sold.length;
+  renderCardGrid(sold, 'sold-grid', 'sold-empty', true);
 }
 
 /* ============ ADMIN RENDER (segregated) ============ */
@@ -1042,7 +1069,7 @@ function handlePhoto(input, previewId, kind) {
 
 /* ============ BACKUP ============ */
 function exportData() {
-  const blob = new Blob([JSON.stringify({ farm: getFarmRecords(), sellers: getSellerRecords() }, null, 2)], { type: 'application/json' });
+  const blob = new Blob([JSON.stringify({ farm: getFarmRecords(), sellers: getSellerRecords(), adminPin: currentPin() }, null, 2)], { type: 'application/json' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
   a.download = 'goat-records-backup-' + new Date().toISOString().slice(0, 10) + '.json';
@@ -1062,6 +1089,7 @@ function importData(input) {
         sellers = data.filter(r => r && (r.source === 'seller' || r.farmerName));
       } else if (data && Array.isArray(data.farm)) {  // new segregated backup
         farm = data.farm; sellers = data.sellers || [];
+        if (data.adminPin && /^\d{4,6}$/.test(String(data.adminPin))) localStorage.setItem('dhadra_admin_pin', String(data.adminPin));
       } else throw 'bad format';
       saveFarmRecords(farm); saveSellerRecords(sellers); renderAll();
       toast(t('toast_imp') + ' — ' + (farm.length + sellers.length));
