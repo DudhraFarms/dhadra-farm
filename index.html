@@ -150,14 +150,14 @@
   footer .urdu { font-family: 'Noto Nastaliq Urdu', serif; }
   .admin-note { font-size: 12px; color: var(--gray); margin-top: 8px; }
   .img-preview { max-height: 120px; border-radius: 8px; margin-top: 6px; display: none; }
-  @media (max-width: 640px) { .form-grid { grid-template-columns: 1fr; } .hero { padding: 30px 22px; } }
+  @media (max-width: 640px) { .form-grid { grid-template-columns: 1fr; } .hero { padding: 30px 22px; } .field input, .field select, .field textarea { font-size: 16px; padding: 11px 12px; } .stats { grid-template-columns: repeat(2, 1fr); } .grid { grid-template-columns: 1fr; } header { padding: 12px 14px; flex-direction: column; align-items: stretch; } .hdr-right { flex-direction: column; align-items: stretch; } .tabs { justify-content: center; } .tab-btn, .lang-btn { padding: 10px 14px; font-size: 14px; text-align: center; } .cta-row { flex-direction: column; } .cta-row a { text-align: center; } .filters { flex-direction: column; } .filters input, .filters select { width: 100%; } .section { font-size: 18px; } .goat-price { font-size: 17px; } .goat-meta { font-size: 12px; } table.goats { font-size: 12.5px; } .form-actions { flex-direction: column; } .form-actions .btn { width: 100%; } }
 </style>
 </head>
 <body>
 
 <header>
   <div class="brand">
-    <div class="logo"><img src="dhadra-logo.png" alt="Dhadra Dairy Farms"></div>
+    <div class="logo"><img src="dhadra-logo.png" alt="Dhadra Goat Farm"></div>
     <div class="names">
       <span class="en">M.K Dhadra Goat Farm</span>
       <span class="ur urdu">ایم۔کے دھدرا گوٹ فارم</span>
@@ -228,7 +228,7 @@
         <div class="field"><label data-i18n="t_cnic">CNIC Number (13 digits)</label><input id="fm-cnic" data-i18n-ph="t_cnic_ph" placeholder="e.g. 36102-1234567-1" maxlength="15"></div>
         <div class="field"><label data-i18n="t_tag">Tag / ID</label><input id="f-tag" data-i18n-ph="t_tag_ph" placeholder="e.g. AK-012"></div>
         <div class="field"><label data-i18n="t_name">Name</label><input id="f-name" data-i18n-ph="t_name_ph" placeholder="e.g. Shahzadi"></div>
-        <div class="field"><label data-i18n="t_breed">Breed</label><input id="f-breed" list="breedList" data-i18n-ph="t_breed_ph" placeholder="e.g. Beetal"><datalist id="breedList"><option>Beetal</option><option>Boer</option><option>Damascus</option><option>Nubian</option><option>Sirohi</option><option>Teddi</option></datalist></div>
+        <div class="field"><label data-i18n="t_breed">Breed</label><select id="f-breed" onchange="onBreedChange('f')"></select><input id="f-breed-other" placeholder="Type breed... / نسل لکھیں" style="display:none" maxlength="40"></div>
         <div class="field"><label data-i18n="t_gender">Gender</label><select id="f-gender"><option data-i18n="male">Male</option><option data-i18n="female">Female</option></select></div>
         <div class="field"><label data-i18n="t_age">Age (months)</label><input id="f-age" type="number" min="0" placeholder="14"></div>
         <div class="field"><label data-i18n="t_weight">Weight (kg)</label><input id="f-weight" type="number" min="0" step="0.1" placeholder="45.5"></div>
@@ -282,7 +282,7 @@
           <div class="field"><label data-i18n="t_source">Listing Source</label><select id="a-source"><option value="farm" data-i18n="src_farm">M.K Dhadra Farm</option><option value="seller" data-i18n="src_seller">Seller (Farmer)</option></select></div>
           <div class="field"><label data-i18n="t_tag">Tag / ID</label><input id="a-tag" data-i18n-ph="t_tag_ph" placeholder="e.g. GR-001"></div>
           <div class="field"><label data-i18n="t_name">Name</label><input id="a-name" data-i18n-ph="t_name_ph" placeholder="e.g. Bella"></div>
-          <div class="field"><label data-i18n="t_breed">Breed</label><input id="a-breed" list="breedList" data-i18n-ph="t_breed_ph" placeholder="e.g. Boer"></div>
+          <div class="field"><label data-i18n="t_breed">Breed</label><select id="a-breed" onchange="onBreedChange('a')"></select><input id="a-breed-other" placeholder="Type breed... / نسل لکھیں" style="display:none" maxlength="40"></div>
           <div class="field"><label data-i18n="t_gender">Gender</label><select id="a-gender"><option data-i18n="male">Male</option><option data-i18n="female">Female</option></select></div>
           <div class="field"><label data-i18n="t_age">Age (months)</label><input id="a-age" type="number" min="0" placeholder="14"></div>
           <div class="field"><label data-i18n="t_weight">Weight (kg)</label><input id="a-weight" type="number" min="0" step="0.1" placeholder="45.5"></div>
@@ -374,6 +374,7 @@ const I18N = {
     t_cnic: 'CNIC Number (13 digits)', t_cnic_ph: 'e.g. 36102-1234567-1', t_cnic_photo: 'CNIC Card Photo (required)',
     t_cnic_opt: 'CNIC Number (optional — 13 digits)', t_cnic_photo_opt: 'CNIC Card Photo (optional)',
     cnic_note: 'Your CNIC is used only to verify the sale — it is never shown to buyers.',
+    breed_choose: 'Choose breed...', breed_other: 'Other (type below)',
     pub_farm_sec: '🏡 M.K Dhadra Farm Stock', pub_seller_sec: '🤝 Seller Listings', seller_empty: 'No approved seller listings yet — farmers\' submissions appear here after review.',
     male: 'Male', female: 'Female',
     submit_btn: '📨 Submit for Review', clear: 'Clear Form',
@@ -418,6 +419,7 @@ const I18N = {
     t_cnic: 'شناختی کارڈ نمبر (13 ہندسے)', t_cnic_ph: 'مثلًا 36102-1234567-1', t_cnic_photo: 'شناختی کارڈ کی تصویر (لازمی)',
     cnic_note: 'آپ کا شناختی کارڈ صرف فروخت کی تصدیق لیے استعمال ہوتا ہے — خریدار کو نہیں دکھایا جاتا۔',
     t_cnic_opt: 'شناختی کارڈ نمبر (اختیاری — 13 ہندسے)', t_cnic_photo_opt: 'شناختی کارڈ کی تصویر (اختیاری)',
+    breed_choose: 'نسل منتخب کریں...', breed_other: 'دیگر (نیچے لکھیں)',
     male: 'نر', female: 'مادہ',
     submit_btn: '📨 جائزے کے لیے جمع کروائیں', clear: 'فارم صاف کریں',
     submit_note: 'سبمشنز کی انتظامی منظوری کے بعد عوامی سائٹ پر شائع ہوں گے۔ خریدار آپ کے نمبر پر رابطہ کریں گے۔',
@@ -445,6 +447,37 @@ const LS_KEY = 'goatfarm_records';            // M.K Dhadra farm stock
 const LS_FARMER_KEY = 'goatfarm_seller_records'; // seller (farmer) listings
 const FARM_NAME = 'M.K Dhadra Goat Farm';
 const FARM_PHONE = '+923225026723';
+// All known Pakistan goat breeds + exotics kept on farms
+const BREEDS = [
+  ['Beetal', 'بیٹل'], ['Teddy', 'ٹیڈی'], ['Nachi', 'ناچی'], ['Dera Din Panah', 'درہ دین پناہ'],
+  ['Barbari', 'باربری'], ['Jattal', 'جٹال'], ['Pahari', 'پہاڑی'], ['Cholistani', 'چولستانی'],
+  ['Kamori', 'کاموری'], ['Gulabi', 'گلابی'], ['Pateri', 'پدیری'], ['Kachhi', 'کچھی'],
+  ['Bugi', 'بوگی'], ['Lehri', 'لہری'], ['Khurasani', 'خُراسانی'], ['Shal', 'شال'],
+  ['Chappar', 'چپڑ'], ['Koh-e-Sulaimani', 'کوہ سلیمانی'], ['Kohistani', 'کوہستانی'], ['Baltistani', 'بلتستانی'],
+  ['Damani', 'دامانی'], ['Waziri', 'وزیری'], ['Gaddi', 'گدی'], ['Makhi Cheeni', 'مکھی چینی'],
+  ['Buchi', 'بچی'], ['Local (Desi)', 'مقامی'], ['Cross-breed', 'ملاگ'],
+  ['Boer', 'بوئر'], ['Damascus', 'دمشقی'], ['Anglo-Nubian', 'اینگلو نوبیئن'],
+  ['Saanen', 'سانیں'], ['Alpine', 'ایلپائن'], ['Sirohi', 'سیروہی']
+];
+function populateBreedSelects() {
+  ['f-breed', 'a-breed'].forEach(id => {
+    const s = document.getElementById(id); if (!s) return;
+    const cur = s.value;
+    s.innerHTML = '<option value="">' + t('breed_choose') + '</option>' +
+      BREEDS.map(b => '<option value="' + esc(b[0]) + '">' + esc(b[0]) + ' (' + b[1] + ')</option>').join('') +
+      '<option value="__other__">' + t('breed_other') + '</option>';
+    if (cur) s.value = cur;
+  });
+}
+function onBreedChange(p) {
+  const s = document.getElementById(p + '-breed'); const o = document.getElementById(p + '-breed-other');
+  if (o) o.style.display = s.value === '__other__' ? 'block' : 'none';
+}
+function getBreed(p) {
+  const s = document.getElementById(p + '-breed'); const o = document.getElementById(p + '-breed-other');
+  if (!s) return '';
+  return s.value === '__other__' ? (o ? o.value.trim() : '') : s.value;
+}
 let editingId = null;
 let currentPhoto = null;      // animal photo
 let currentCnicPhoto = null;  // seller CNIC card photo
@@ -645,11 +678,13 @@ function renderAdmin() {
 /* ============ FORM ============ */
 function resetForm() {
   editingId = null;
-  ['f-tag','f-name','f-breed','f-age','f-weight','f-price','f-notes','fm-name','fm-phone','fm-address','fm-cnic','a-tag','a-name','a-breed','a-age','a-weight','a-price','a-notes','a-farmphone','a-farmername','a-cnic','a-address'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+  ['f-tag','f-name','f-breed-other','f-age','f-weight','f-price','f-notes','fm-name','fm-phone','fm-address','fm-cnic','a-tag','a-name','a-breed-other','a-age','a-weight','a-price','a-notes','a-farmphone','a-farmername','a-cnic','a-address'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
   document.getElementById('f-gender').value = 'Male';
   document.getElementById('a-gender').value = 'Male';
   document.getElementById('a-status').value = 'released';
   document.getElementById('a-source').value = 'farm';
+  ['f-breed','a-breed'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+  ['f-breed-other','a-breed-other'].forEach(id => { const el = document.getElementById(id); if (el) el.style.display = 'none'; });
   ['f-photo','a-photo','fm-cnic-photo','a-cnic-photo'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
   ['photo-preview','a-photo-preview','fmcnic-preview','a-cnic-preview'].forEach(id => { const el = document.getElementById(id); if (el) el.style.display = 'none'; });
   currentPhoto = null;
@@ -665,7 +700,11 @@ function editGoat(id) {
   document.getElementById('a-source').value = f.store;
   document.getElementById('a-tag').value = g.tag;
   document.getElementById('a-name').value = g.name;
-  document.getElementById('a-breed').value = g.breed;
+  const inList = BREEDS.some(b => b[0] === g.breed);
+  document.getElementById('a-breed').value = inList ? g.breed : '__other__';
+  const ao = document.getElementById('a-breed-other');
+  ao.style.display = inList ? 'none' : 'block';
+  if (!inList) ao.value = g.breed || '';
   document.getElementById('a-gender').value = g.gender;
   document.getElementById('a-age').value = g.age;
   document.getElementById('a-weight').value = g.weight;
@@ -688,7 +727,7 @@ function validCnic(v) { return /^\d{13}$/.test(String(v || '').replace(/\D/g, ''
 function saveGoat() {
   const tag = document.getElementById('a-tag').value.trim();
   const name = document.getElementById('a-name').value.trim();
-  const breed = document.getElementById('a-breed').value.trim();
+  const breed = getBreed('a');
   const price = +document.getElementById('a-price').value || 0;
   const source = document.getElementById('a-source').value;
   const sellerName = document.getElementById('a-farmername').value.trim();
@@ -737,7 +776,7 @@ function submitFarmerGoat() {
   const cnic = document.getElementById('fm-cnic').value.trim();
   const tag = document.getElementById('f-tag').value.trim();
   const name = document.getElementById('f-name').value.trim();
-  const breed = document.getElementById('f-breed').value.trim();
+  const breed = getBreed('f');
   const price = +document.getElementById('f-price').value || 0;
   if (!farmerName || !farmerPhone) { toast(t('toast_farm_req')); return; }
   if (!address) { toast(t('toast_addr')); return; }
@@ -859,6 +898,7 @@ function setLang(l) { lang = l; localStorage.setItem('dhadra_lang', l); applyLan
 if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
   navigator.serviceWorker.register('sw.js').catch(() => {});
 }
+populateBreedSelects();
 (function migrateStores() {
   if (localStorage.getItem(LS_FARMER_KEY) === null) {   // one-time: split old mixed list
     const farm = getFarmRecords();
