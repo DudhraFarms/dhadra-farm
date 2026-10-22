@@ -149,6 +149,9 @@
   .foot-bottom { text-align: center; padding: 12px; font-size: 12.5px; border-top: 1px solid rgba(255,255,255,.2); }
   footer .urdu { font-family: 'Noto Nastaliq Urdu', serif; }
   .admin-note { font-size: 12px; color: var(--gray); margin-top: 8px; }
+  .my-list-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px; margin-bottom: 8px; background: #fff; flex-wrap: wrap; }
+  .my-meta { font-size: 12.5px; color: var(--gray); }
+  .my-actions { display: flex; align-items: center; gap: 8px; }
   .img-preview { max-height: 120px; border-radius: 8px; margin-top: 6px; display: none; }
   @media (max-width: 640px) { .form-grid { grid-template-columns: 1fr; } .hero { padding: 30px 22px; } .field input, .field select, .field textarea { font-size: 16px; padding: 11px 12px; } .stats { grid-template-columns: repeat(2, 1fr); } .grid { grid-template-columns: 1fr; } header { padding: 12px 14px; flex-direction: column; align-items: stretch; } .hdr-right { flex-direction: column; align-items: stretch; } .tabs { justify-content: center; } .tab-btn, .lang-btn { padding: 10px 14px; font-size: 14px; text-align: center; } .cta-row { flex-direction: column; } .cta-row a { text-align: center; } .filters { flex-direction: column; } .filters input, .filters select { width: 100%; } .section { font-size: 18px; } .goat-price { font-size: 17px; } .goat-meta { font-size: 12px; } table.goats { font-size: 12.5px; } .form-actions { flex-direction: column; } .form-actions .btn { width: 100%; } }
 </style>
@@ -243,6 +246,17 @@
         <button class="btn btn-ghost" onclick="resetForm()" data-i18n="clear">Clear Form</button>
       </div>
       <div class="admin-note" data-i18n="submit_note">Submissions are reviewed by the farm admin before appearing on the public site.</div>
+    </div>
+
+    <div class="panel" style="margin-top:16px">
+      <h3 data-i18n="my_list_title">📋 My Listings (Mark as Sold)</h3>
+      <div class="filters" style="margin-bottom:10px">
+        <input type="text" id="my-phone" data-i18n-ph="my_phone_ph" placeholder="e.g. 0300-1234567" style="flex:1;min-width:180px">
+        <button class="btn btn-primary" onclick="findMyListings()" data-i18n="my_find">Find My Listings</button>
+      </div>
+      <div id="my-list-rows"></div>
+      <div id="my-list-empty" style="display:none;color:var(--gray);font-size:13.5px;" data-i18n="my_none">No listings found for this number.</div>
+      <div class="admin-note" data-i18n="my_note">Enter the same phone number you used when submitting your animal. Only approved (live) listings can be marked as sold.</div>
     </div>
   </section>
 
@@ -374,6 +388,9 @@ const I18N = {
     t_cnic: 'CNIC Number (13 digits)', t_cnic_ph: 'e.g. 36102-1234567-1', t_cnic_photo: 'CNIC Card Photo (required)',
     t_cnic_opt: 'CNIC Number (optional — 13 digits)', t_cnic_photo_opt: 'CNIC Card Photo (optional)',
     cnic_note: 'Your CNIC is used only to verify the sale — it is never shown to buyers.',
+    my_list_title: '📋 My Listings (Mark as Sold)', my_phone_ph: 'e.g. 0300-1234567', my_find: 'Find My Listings',
+    my_none: 'No listings found for this number.', my_sold_btn: '✓ Mark as Sold', my_confirm: 'Mark as sold?',
+    my_note: 'Enter the same phone number you used when submitting your animal. Only approved (live) listings can be marked as sold.',
     breed_choose: 'Choose breed...', breed_other: 'Other (type below)',
     pub_farm_sec: '🏡 M.K Dhadra Farm Stock', pub_seller_sec: '🤝 Seller Listings', seller_empty: 'No approved seller listings yet — farmers\' submissions appear here after review.',
     male: 'Male', female: 'Female',
@@ -417,7 +434,10 @@ const I18N = {
     t_sphone: 'بیچنے والے کا فون / واٹس ایپ', t_sphone_ph: 'مثلًا 0300-1234567', t_address: 'پتہ / گاؤں', t_address_ph: 'مثلًا چک 31/11-L, چیچہ وطنی',
     t_sname: 'بیچنے والے کا نام', t_sname_ph: 'مثلًا احمد خان', t_source: 'کس کی لسٹ ہے', src_farm: 'ایم۔کے دھدرا فارم', src_seller: 'بیچنے والا (کسان)',
     t_cnic: 'شناختی کارڈ نمبر (13 ہندسے)', t_cnic_ph: 'مثلًا 36102-1234567-1', t_cnic_photo: 'شناختی کارڈ کی تصویر (لازمی)',
-    cnic_note: 'آپ کا شناختی کارڈ صرف فروخت کی تصدیق لیے استعمال ہوتا ہے — خریدار کو نہیں دکھایا جاتا۔',
+    cnic_note: 'آپ کا شناختی کارڈ صرف فروخت کی تصدیق کے لیے استعمال ہوتا ہے — خریدار کو نہیں دکھایا جاتا۔',
+    my_list_title: '📋 میری لسٹیں (فروخت شدہ کریں)', my_phone_ph: 'مثلاً 0300-1234567', my_find: 'میری لسٹیں تلاش کریں',
+    my_none: 'اس نمبر پر کوئی لسٹ نہیں ملی۔', my_sold_btn: '✓ فروخت شدہ کریں', my_confirm: 'فروخت شدہ کریں؟',
+    my_note: 'جمع کروانے کے وقت والا وہی فون نمبر لکھیں۔ صرف منظور شدہ (لائیو) لسٹیں فروخت شدہ کی جا سکتی ہیں۔',
     t_cnic_opt: 'شناختی کارڈ نمبر (اختیاری — 13 ہندسے)', t_cnic_photo_opt: 'شناختی کارڈ کی تصویر (اختیاری)',
     breed_choose: 'نسل منتخب کریں...', breed_other: 'دیگر (نیچے لکھیں)',
     male: 'نر', female: 'مادہ',
@@ -801,6 +821,35 @@ function submitFarmerGoat() {
   saveSellerRecords(getSellerRecords().concat([rec]));
   resetForm(); renderAll();
   toast(t('toast_sub'));
+}
+function findMyListings() {
+  const phone = document.getElementById('my-phone').value.trim();
+  const rows = document.getElementById('my-list-rows');
+  const empty = document.getElementById('my-list-empty');
+  if (!phone) { empty.style.display = 'block'; rows.innerHTML = ''; return; }
+  const digits = waDigits(phone);
+  const mine = getSellerRecords().filter(r => waDigits(r.farmerPhone) === digits).sort((a, b) => (b.created || 0) - (a.created || 0));
+  rows.innerHTML = '';
+  empty.style.display = mine.length ? 'none' : 'block';
+  mine.forEach(g => {
+    const div = document.createElement('div');
+    div.className = 'my-list-row';
+    const pill = '<span class="st-pill st-' + g.status + '">' + t('st_' + g.status) + '</span>';
+    const soldBtn = g.status === 'released' ? '<button class="btn-sm btn-sold" onclick="markMySold(\'' + g.id + '\')">' + t('my_sold_btn') + '</button>' : '';
+    div.innerHTML =
+      '<div class="my-info"><b>' + esc(g.name) + '</b> (' + esc(g.tag) + ')<div class="my-meta">' + esc(g.breed) + ' — Rs ' + Number(g.price || 0).toLocaleString() + '</div></div>' +
+      '<div class="my-actions">' + pill + soldBtn + '</div>';
+    rows.appendChild(div);
+  });
+}
+function markMySold(id) {
+  const f = findRecord(id);
+  if (!f || f.store !== 'seller') return;
+  if (!confirm(t('my_confirm') + ' "' + f.rec.name + '"?')) return;
+  f.rec.status = 'sold';
+  saveStore(f.store, f.list);
+  renderAll(); findMyListings();
+  toast('✓ ' + f.rec.name + ' ' + t('toast_sold'));
 }
 function setStatus(id, status) {
   const f = findRecord(id);
