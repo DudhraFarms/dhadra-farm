@@ -224,6 +224,10 @@
 
     <div class="panel">
       <h3 data-i18n="sub_title">➕ Submit Your Goat for Sale</h3>
+      <div id="my-editing-banner" style="display:none;background:#fff7e6;border:1px solid #e0b64a;border-radius:10px;padding:10px 12px;margin-bottom:12px;font-size:13.5px;">
+        <span id="my-editing-text"></span>
+        <button class="btn btn-ghost" style="padding:4px 12px;font-size:12.5px;margin-inline-start:8px" onclick="cancelMyEdit()" data-i18n="my_cancel">Cancel</button>
+      </div>
       <div class="form-grid">
         <div class="field"><label data-i18n="f_farmer">Your Name (farmer)</label><input id="fm-name" data-i18n-ph="f_farmer_ph" placeholder="e.g. Ahmed Khan"></div>
         <div class="field"><label data-i18n="f_phone">Your Phone / WhatsApp</label><input id="fm-phone" data-i18n-ph="f_phone_ph" placeholder="e.g. 0300-1234567"></div>
@@ -267,7 +271,7 @@
       <p style="color:var(--gray);font-size:14px;" data-i18n="admin_note">Enter the admin PIN to manage goat records and farmer submissions.</p>
       <input type="password" id="pin-input" maxlength="6" placeholder="••••" onkeydown="if(event.key==='Enter')tryPin()">
       <button class="btn btn-primary" style="width:100%" onclick="tryPin()" data-i18n="unlock">Unlock Admin</button>
-      <div class="admin-note">Default PIN: 1234 — change it in the code (ADMIN_PIN).</div>
+      <div class="admin-note">Default PIN: 1234 — you can change it inside Admin (Change PIN panel).</div>
     </div>
 
     <div id="admin-content" style="display:none">
@@ -340,6 +344,18 @@
           <label class="btn btn-ghost" style="margin:0">⬆ Import Backup<input type="file" id="import-file" accept=".json" style="display:none" onchange="importData(this)"></label>
         </div>
       </div>
+
+      <div class="panel">
+        <h3 data-i18n="pin_title">🔑 Change Admin PIN</h3>
+        <div class="form-grid">
+          <div class="field"><label data-i18n="pin_current">Current PIN</label><input type="password" id="pin-cur" maxlength="6" inputmode="numeric" autocomplete="off"></div>
+          <div class="field"><label data-i18n="pin_new">New PIN (4-6 digits)</label><input type="password" id="pin-new" maxlength="6" inputmode="numeric" autocomplete="off"></div>
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-primary" onclick="changeAdminPin()" data-i18n="pin_save">💾 Update PIN</button>
+        </div>
+        <div class="admin-note" data-i18n="pin_note">The PIN is stored on this device only. If you forget it, clear the site data in your browser to return to the default 1234.</div>
+      </div>
     </div>
   </section>
 </main>
@@ -390,6 +406,10 @@ const I18N = {
     cnic_note: 'Your CNIC is used only to verify the sale — it is never shown to buyers.',
     my_list_title: '📋 My Listings (Mark as Sold)', my_phone_ph: 'e.g. 0300-1234567', my_find: 'Find My Listings',
     my_none: 'No listings found for this number.', my_sold_btn: '✓ Mark as Sold', my_confirm: 'Mark as sold?',
+    my_edit_btn: '✏ Edit', my_editing: '✏ Editing your listing — update details below, then press Update', my_update_btn: '💾 Update My Listing', my_cancel: 'Cancel', toast_my_upd: '✓ Your listing has been updated',
+    pin_title: '🔑 Change Admin PIN', pin_current: 'Current PIN', pin_new: 'New PIN (4-6 digits)', pin_save: '💾 Update PIN',
+    pin_ok: '✓ Admin PIN updated', pin_wrong_cur: 'Current PIN is incorrect', pin_bad: 'New PIN must be 4-6 digits (and different)',
+    pin_note: 'The PIN is stored on this device only. If you forget it, clear the site data in your browser to return to the default 1234.',
     my_note: 'Enter the same phone number you used when submitting your animal. Only approved (live) listings can be marked as sold.',
     breed_choose: 'Choose breed...', breed_other: 'Other (type below)',
     pub_farm_sec: '🏡 M.K Dhadra Farm Stock', pub_seller_sec: '🤝 Seller Listings', seller_empty: 'No approved seller listings yet — farmers\' submissions appear here after review.',
@@ -437,6 +457,10 @@ const I18N = {
     cnic_note: 'آپ کا شناختی کارڈ صرف فروخت کی تصدیق کے لیے استعمال ہوتا ہے — خریدار کو نہیں دکھایا جاتا۔',
     my_list_title: '📋 میری لسٹیں (فروخت شدہ کریں)', my_phone_ph: 'مثلاً 0300-1234567', my_find: 'میری لسٹیں تلاش کریں',
     my_none: 'اس نمبر پر کوئی لسٹ نہیں ملی۔', my_sold_btn: '✓ فروخت شدہ کریں', my_confirm: 'فروخت شدہ کریں؟',
+    my_edit_btn: '✏ ترمیم', my_editing: '✏ آپ کی لسٹ کی ترمیم — نیچے تفصیل درست کریں اور اپ ڈیٹ دبائیں', my_update_btn: '💾 میری لسٹ اپ ڈیٹ کریں', my_cancel: 'منسوخ', toast_my_upd: '✓ آپ کی لسٹ اپ ڈیٹ ہو گئی',
+    pin_title: '🔑 ایڈمن PIN تبدیل کریں', pin_current: 'موجودہ PIN', pin_new: 'نیا PIN (4-6 ہندسے)', pin_save: '💾 PIN اپ ڈیٹ کریں',
+    pin_ok: '✓ ایڈمن PIN تبدیل ہو گیا', pin_wrong_cur: 'موجودہ PIN غلط ہے', pin_bad: 'نیا PIN چار سے چھ ہندسوں کا اور پرانے سے مختلف ہونا چاہیے',
+    pin_note: 'PIN صرف اسی ڈیوائس پر محفوظ ہوتا ہے۔ اگر بھول جائیں تو براؤزر کا سائٹ ڈیٹا صاف کریں — پہلے والا 1234 واپس آ جائے گا۔',
     my_note: 'جمع کروانے کے وقت والا وہی فون نمبر لکھیں۔ صرف منظور شدہ (لائیو) لسٹیں فروخت شدہ کی جا سکتی ہیں۔',
     t_cnic_opt: 'شناختی کارڈ نمبر (اختیاری — 13 ہندسے)', t_cnic_photo_opt: 'شناختی کارڈ کی تصویر (اختیاری)',
     breed_choose: 'نسل منتخب کریں...', breed_other: 'دیگر (نیچے لکھیں)',
@@ -548,13 +572,25 @@ function switchTab(tab) {
 }
 
 /* ============ PIN ============ */
+function currentPin() { return localStorage.getItem('dhadra_admin_pin') || ADMIN_PIN; }
 function tryPin() {
-  if (document.getElementById('pin-input').value === ADMIN_PIN) {
+  if (document.getElementById('pin-input').value === currentPin()) {
     adminUnlocked = true;
     document.getElementById('pin-gate').style.display = 'none';
     document.getElementById('admin-content').style.display = 'block';
     renderAll();
   } else { toast(t('toast_pin')); }
+}
+function changeAdminPin() {
+  const cur = document.getElementById('pin-cur').value.trim();
+  const nw = document.getElementById('pin-new').value.trim();
+  if (cur !== currentPin()) { toast(t('pin_wrong_cur')); return; }
+  if (!/^\d{4,6}$/.test(nw)) { toast(t('pin_bad')); return; }
+  if (nw === cur) { toast(t('pin_bad')); return; }
+  localStorage.setItem('dhadra_admin_pin', nw);
+  document.getElementById('pin-cur').value = '';
+  document.getElementById('pin-new').value = '';
+  toast(t('pin_ok'));
 }
 
 /* ============ WHATSAPP ============ */
@@ -698,6 +734,10 @@ function renderAdmin() {
 /* ============ FORM ============ */
 function resetForm() {
   editingId = null;
+  editingMyId = null;
+  const eb = document.getElementById('my-editing-banner');
+  if (eb) eb.style.display = 'none';
+  const sb = document.querySelector('[data-i18n="submit_btn"]'); if (sb) sb.textContent = t('submit_btn');
   ['f-tag','f-name','f-breed-other','f-age','f-weight','f-price','f-notes','fm-name','fm-phone','fm-address','fm-cnic','a-tag','a-name','a-breed-other','a-age','a-weight','a-price','a-notes','a-farmphone','a-farmername','a-cnic','a-address'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
   document.getElementById('f-gender').value = 'Male';
   document.getElementById('a-gender').value = 'Male';
@@ -789,6 +829,44 @@ function saveGoat() {
   resetForm(); renderAll();
   toast(prev ? t('toast_upd') : t('toast_add'));
 }
+let editingMyId = null;
+function editMyListing(id) {
+  const f = findRecord(id);
+  if (!f || f.store !== 'seller') return;
+  const g = f.rec;
+  editingMyId = id;
+  document.getElementById('fm-name').value = g.farmerName || '';
+  document.getElementById('fm-phone').value = g.farmerPhone || '';
+  document.getElementById('fm-address').value = g.address || '';
+  document.getElementById('fm-cnic').value = g.cnic || '';
+  document.getElementById('f-tag').value = g.tag;
+  document.getElementById('f-name').value = g.name;
+  const inList = BREEDS.some(b => b[0] === g.breed);
+  document.getElementById('f-breed').value = inList ? g.breed : '__other__';
+  const fo = document.getElementById('f-breed-other');
+  fo.style.display = inList ? 'none' : 'block';
+  if (!inList) fo.value = g.breed || '';
+  document.getElementById('f-gender').value = g.gender || 'Male';
+  document.getElementById('f-age').value = g.age;
+  document.getElementById('f-weight').value = g.weight;
+  document.getElementById('f-price').value = g.price;
+  document.getElementById('f-notes').value = g.notes || '';
+  currentPhoto = g.photo || null;
+  if (currentPhoto) { const pv = document.getElementById('photo-preview'); pv.src = currentPhoto; pv.style.display = 'block'; }
+  currentCnicPhoto = g.cnicPhoto || null;
+  if (currentCnicPhoto) { const pv = document.getElementById('fmcnic-preview'); pv.src = currentCnicPhoto; pv.style.display = 'block'; }
+  const banner = document.getElementById('my-editing-banner');
+  if (banner) { banner.style.display = 'block'; document.getElementById('my-editing-text').textContent = t('my_editing') + ': ' + g.name; }
+  const sb = document.querySelector('[data-i18n="submit_btn"]'); if (sb) sb.textContent = t('my_update_btn');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function cancelMyEdit() {
+  editingMyId = null;
+  const banner = document.getElementById('my-editing-banner');
+  if (banner) banner.style.display = 'none';
+  const sb = document.querySelector('[data-i18n="submit_btn"]'); if (sb) sb.textContent = t('submit_btn');
+  resetForm();
+}
 function submitFarmerGoat() {
   const farmerName = document.getElementById('fm-name').value.trim();
   const farmerPhone = document.getElementById('fm-phone').value.trim();
@@ -806,6 +884,27 @@ function submitFarmerGoat() {
   if (!price) { toast(t('toast_price')); return; }
   if (!currentPhoto) { toast(t('toast_photo')); return; }
   if (!currentCnicPhoto) { toast(t('toast_cnic_photo')); return; }
+  if (editingMyId) {
+    const f = findRecord(editingMyId);
+    if (!f || f.store !== 'seller') { editingMyId = null; }
+    else {
+      const r = f.rec;
+      r.tag = tag; r.name = name; r.breed = breed;
+      r.gender = document.getElementById('f-gender').value;
+      r.age = +document.getElementById('f-age').value || 0;
+      r.weight = +document.getElementById('f-weight').value || 0;
+      r.price = price;
+      r.notes = document.getElementById('f-notes').value.trim();
+      r.address = address; r.cnic = cnic; r.cnicPhoto = currentCnicPhoto;
+      r.photo = currentPhoto;
+      r.farmerName = farmerName; r.farmerPhone = farmerPhone; r.contactPhone = farmerPhone;
+      saveStore('seller', f.list);
+      editingMyId = null;
+      resetForm(); renderAll();
+      toast(t('toast_my_upd'));
+      return;
+    }
+  }
   const rec = {
     id: uid(), tag: tag, name: name, breed: breed,
     gender: document.getElementById('f-gender').value,
@@ -835,10 +934,12 @@ function findMyListings() {
     const div = document.createElement('div');
     div.className = 'my-list-row';
     const pill = '<span class="st-pill st-' + g.status + '">' + t('st_' + g.status) + '</span>';
+    const canManage = g.status === 'pending' || g.status === 'released';
+    const editBtn = canManage ? '<button class="btn-sm btn-edit" onclick="editMyListing(\'' + g.id + '\')">' + t('my_edit_btn') + '</button>' : '';
     const soldBtn = g.status === 'released' ? '<button class="btn-sm btn-sold" onclick="markMySold(\'' + g.id + '\')">' + t('my_sold_btn') + '</button>' : '';
     div.innerHTML =
       '<div class="my-info"><b>' + esc(g.name) + '</b> (' + esc(g.tag) + ')<div class="my-meta">' + esc(g.breed) + ' — Rs ' + Number(g.price || 0).toLocaleString() + '</div></div>' +
-      '<div class="my-actions">' + pill + soldBtn + '</div>';
+      '<div class="my-actions">' + pill + editBtn + soldBtn + '</div>';
     rows.appendChild(div);
   });
 }
