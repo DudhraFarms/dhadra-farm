@@ -460,7 +460,8 @@ const I18N = {
     my_edit_btn: '✏ Edit', my_editing: '✏ Editing your listing — update details below, then press Update', my_update_btn: '💾 Update My Listing', my_cancel: 'Cancel', toast_my_upd: '✓ Your listing has been updated',
     pin_title: '🔑 Change Admin PIN', pin_current: 'Current PIN', pin_new: 'New PIN (4-6 digits)', pin_save: '💾 Update PIN',
     pin_ok: '✓ Admin PIN updated', pin_wrong_cur: 'Current PIN is incorrect', pin_bad: 'New PIN must be 4-6 digits (and different)',
-    pin_custom_hint: 'This device has its own custom PIN. Enter it, or clear this site\'s data in your browser to reset to 1234.',
+    pin_custom_hint: 'This device has a different admin PIN. Enter the synced admin PIN (set via Change PIN on the main device), or clear this site\'s data to use 1234.',
+    pin_cloud_fail: 'cloud sync unavailable — saved on this device only',
     pin_note: 'The PIN is stored on this device only. If you forget it, clear the site data in your browser to return to the default 1234.',
     pic_photo: 'Animal Photo *', pic_cnic: 'CNIC Card Photo *', pic_cnic_opt: 'CNIC Card Photo', pic_add: 'Tap to add', pic_change: 'Change',
     my_note: 'Enter the same phone number you used when submitting your animal. Only approved (live) listings can be marked as sold.',
@@ -516,7 +517,8 @@ const I18N = {
     my_edit_btn: '✏ ترمیم', my_editing: '✏ آپ کی لسٹ کی ترمیم — نیچے تفصیل درست کریں اور اپ ڈیٹ دبائیں', my_update_btn: '💾 میری لسٹ اپ ڈیٹ کریں', my_cancel: 'منسوخ', toast_my_upd: '✓ آپ کی لسٹ اپ ڈیٹ ہو گئی',
     pin_title: '🔑 ایڈمن PIN تبدیل کریں', pin_current: 'موجودہ PIN', pin_new: 'نیا PIN (4-6 ہندسے)', pin_save: '💾 PIN اپ ڈیٹ کریں',
     pin_ok: '✓ ایڈمن PIN تبدیل ہو گیا', pin_wrong_cur: 'موجودہ PIN غلط ہے', pin_bad: 'نیا PIN چار سے چھ ہندسوں کا اور پرانے سے مختلف ہونا چاہیے',
-    pin_custom_hint: 'اس ڈیوائس پر اپنی مرضی کا PIN ہے۔ وہی درج کریں، یا براؤزر میں اس سائٹ کا ڈیٹا صاف کریں — 1234 واپس آ جائے گا۔',
+    pin_custom_hint: 'اس ڈیوائس کا ایڈمن PIN مختلف ہے۔ سنک شدہ PIN درج کریں (بنیادی ڈیوائس سے Change PIN)، یا اس سائٹ کا ڈیٹا صاف کر کے 1234 استعمال کریں۔',
+    pin_cloud_fail: 'کلاؤڈ سنک دستیاب نہیں — صرف اسی ڈیوائس پر محفوظ ہوا',
     pin_note: 'PIN صرف اسی ڈیوائس پر محفوظ ہوتا ہے۔ اگر بھول جائیں تو براؤزر کا سائٹ ڈیٹا صاف کریں — پہلے والا 1234 واپس آ جائے گا۔',
     pic_photo: 'جانور کی تصویر *', pic_cnic: 'شناختی کارڈ کی تصویر *', pic_cnic_opt: 'شناختی کارڈ کی تصویر', pic_add: 'تصویر لگائیں', pic_change: 'تبدیل کریں',
     my_note: 'جمع کروانے کے وقت والا وہی فون نمبر لکھیں۔ صرف منظور شدہ (لائیو) لسٹیں فروخت شدہ کی جا سکتی ہیں۔',
@@ -630,31 +632,70 @@ function switchTab(tab) {
 }
 
 /* ============ PIN ============ */
+const PIN_CLOUD = 'https://textdb.dev/api/data/mizaliz-dhadra-farm-pin-2026-x7q';
+const PIN_SALT = 'dhadra-farm-2026-pin';
 function currentPin() { return localStorage.getItem('dhadra_admin_pin') || ADMIN_PIN; }
-function tryPin() {
+async function pinHash(pin) {
+  if (!window.crypto || !crypto.subtle) return null;
+  try {
+    const enc = new TextEncoder();
+    const key = await crypto.subtle.importKey('raw', enc.encode(pin), 'PBKDF2', false, ['deriveBits']);
+    const bits = await crypto.subtle.deriveBits({ name: 'PBKDF2', hash: 'SHA-256', salt: enc.encode(PIN_SALT), iterations: 100000 }, key, 256);
+    return Array.from(new Uint8Array(bits)).map(b => b.toString(16).padStart(2, '0')).join('');
+  } catch (e) { return null; }
+}
+async function getCloudPinHash() {
+  try {
+    const r = await fetch(PIN_CLOUD + '?t=' + Date.now(), { cache: 'no-store' });
+    if (r.ok) {
+      const j = JSON.parse((await r.text()) || '{}');
+      const h = j && j.pinHash ? j.pinHash : null;
+      if (h) localStorage.setItem('dhadra_cloud_pin_hash', h);
+      return h;
+    }
+  } catch (e) {}
+  return localStorage.getItem('dhadra_cloud_pin_hash');
+}
+async function saveCloudPinHash(hash) {
+  try {
+    const r = await fetch(PIN_CLOUD, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ pinHash: hash }) });
+    if (r.ok) { localStorage.setItem('dhadra_cloud_pin_hash', hash); return true; }
+  } catch (e) {}
+  return false;
+}
+function adminUnlock() {
+  adminUnlocked = true;
+  document.getElementById('pin-gate').style.display = 'none';
+  document.getElementById('admin-content').style.display = 'block';
+  document.getElementById('pin-input').value = '';
+  renderAll();
+}
+async function tryPin() {
   const entered = String(document.getElementById('pin-input').value || '').replace(/\s/g, '');
   const devicePin = currentPin();
-  if (entered === devicePin) {
-    adminUnlocked = true;
-    document.getElementById('pin-gate').style.display = 'none';
-    document.getElementById('admin-content').style.display = 'block';
-    document.getElementById('pin-input').value = '';
-    renderAll();
-  } else if (entered === ADMIN_PIN && devicePin !== ADMIN_PIN) {
-    // helpful hint: this device has a custom PIN (set on this device only)
-    toast(t('pin_custom_hint'));
-  } else { toast(t('toast_pin')); }
+  if (entered === devicePin) { adminUnlock(); return; }
+  const cloudHash = await getCloudPinHash();
+  if (cloudHash) {
+    const enteredHash = await pinHash(entered);
+    if (enteredHash && enteredHash === cloudHash) {
+      localStorage.setItem('dhadra_admin_pin', entered);   // one PIN everywhere: self-heal this device
+      adminUnlock(); return;
+    }
+  }
+  if (entered === ADMIN_PIN && devicePin !== ADMIN_PIN) { toast(t('pin_custom_hint')); }
+  else { toast(t('toast_pin')); }
 }
-function changeAdminPin() {
-  const cur = document.getElementById('pin-cur').value.trim();
-  const nw = document.getElementById('pin-new').value.trim();
+async function changeAdminPin() {
+  const cur = String(document.getElementById('pin-cur').value || '').replace(/\s/g, '');
+  const nw = String(document.getElementById('pin-new').value || '').replace(/\s/g, '');
   if (cur !== currentPin()) { toast(t('pin_wrong_cur')); return; }
-  if (!/^\d{4,6}$/.test(nw)) { toast(t('pin_bad')); return; }
-  if (nw === cur) { toast(t('pin_bad')); return; }
+  if (!/^\d{4,6}$/.test(nw) || nw === cur) { toast(t('pin_bad')); return; }
   localStorage.setItem('dhadra_admin_pin', nw);
   document.getElementById('pin-cur').value = '';
   document.getElementById('pin-new').value = '';
-  toast(t('pin_ok'));
+  const h = await pinHash(nw);
+  if (h && await saveCloudPinHash(h)) { toast(t('pin_ok') + ' ☁'); }
+  else { toast(t('pin_ok') + ' — ' + t('pin_cloud_fail')); }
 }
 
 /* ============ WHATSAPP ============ */
