@@ -149,9 +149,18 @@
   .foot-bottom { text-align: center; padding: 12px; font-size: 12.5px; border-top: 1px solid rgba(255,255,255,.2); }
   footer .urdu { font-family: 'Noto Nastaliq Urdu', serif; }
   .admin-note { font-size: 12px; color: var(--gray); margin-top: 8px; }
-  .my-list-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px; margin-bottom: 8px; background: #fff; flex-wrap: wrap; }
-  .my-meta { font-size: 12.5px; color: var(--gray); }
-  .my-actions { display: flex; align-items: center; gap: 8px; }
+  .pic-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
+  .pic-slot { border: 1.5px dashed var(--border); border-radius: 12px; padding: 8px; display: flex; gap: 8px; align-items: center; background: #fff; }
+  .pic-slot img.img-preview { width: 56px; height: 56px; object-fit: cover; border-radius: 8px; max-height: none; margin-top: 0; flex-shrink: 0; }
+  .pic-main { display: flex; flex-direction: column; gap: 3px; min-width: 0; flex: 1; }
+  .pic-btn { background: var(--green-2); color: #fff; border-radius: 8px; padding: 7px 8px; font-size: 12px; font-weight: 600; cursor: pointer; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
+  .pic-btn:active { background: var(--green); }
+  .pic-cap { font-size: 11px; color: var(--gray); font-weight: 600; }
+  .pic-input { display: none !important; }
+  .my-list-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 10px; border: 1px solid var(--border); border-radius: 10px; margin-bottom: 6px; background: #fff; flex-wrap: wrap; }
+  .my-list-row .btn-sm { padding: 5px 9px; font-size: 11.5px; }
+  .my-meta { font-size: 12px; color: var(--gray); }
+  .my-actions { display: flex; align-items: center; gap: 6px; }
   .img-preview { max-height: 120px; border-radius: 8px; margin-top: 6px; display: none; }
   @media (max-width: 640px) { .form-grid { grid-template-columns: 1fr; } .hero { padding: 30px 22px; } .field input, .field select, .field textarea { font-size: 16px; padding: 11px 12px; } .stats { grid-template-columns: repeat(2, 1fr); } .grid { grid-template-columns: 1fr; } header { padding: 12px 14px; flex-direction: column; align-items: stretch; } .hdr-right { flex-direction: column; align-items: stretch; } .tabs { justify-content: center; } .tab-btn, .lang-btn { padding: 10px 14px; font-size: 14px; text-align: center; } .cta-row { flex-direction: column; } .cta-row a { text-align: center; } .filters { flex-direction: column; } .filters input, .filters select { width: 100%; } .section { font-size: 18px; } .goat-price { font-size: 17px; } .goat-meta { font-size: 12px; } table.goats { font-size: 12.5px; } .form-actions { flex-direction: column; } .form-actions .btn { width: 100%; } }
 </style>
@@ -241,8 +250,24 @@
         <div class="field"><label data-i18n="t_weight">Weight (kg)</label><input id="f-weight" type="number" min="0" step="0.1" placeholder="45.5"></div>
         <div class="field"><label data-i18n="t_price">Asking Price (PKR)</label><input id="f-price" type="number" min="0" placeholder="110000"></div>
       </div>
-      <div class="field" style="margin-top:12px"><label data-i18n="t_photo">Photo (required — auto-resized)</label><input type="file" id="f-photo" accept="image/*" onchange="handlePhoto(this,'photo-preview')"><img id="photo-preview" class="img-preview"></div>
-      <div class="field" style="margin-top:12px"><label data-i18n="t_cnic_photo">CNIC Card Photo (required)</label><input type="file" id="fm-cnic-photo" accept="image/*" onchange="handlePhoto(this,'fmcnic-preview','cnic')"><img id="fmcnic-preview" class="img-preview"></div>
+      <div class="pic-grid">
+        <div class="pic-slot">
+          <div class="pic-main">
+            <label class="pic-btn" for="f-photo">📷 <span data-i18n="pic_add">Tap to add</span></label>
+            <input type="file" id="f-photo" class="pic-input" accept="image/*" onchange="handlePhoto(this,'photo-preview')">
+            <span class="pic-cap" data-i18n="pic_photo">Animal Photo *</span>
+          </div>
+          <img id="photo-preview" class="img-preview">
+        </div>
+        <div class="pic-slot">
+          <div class="pic-main">
+            <label class="pic-btn" for="fm-cnic-photo">🪪 <span data-i18n="pic_add">Tap to add</span></label>
+            <input type="file" id="fm-cnic-photo" class="pic-input" accept="image/*" onchange="handlePhoto(this,'fmcnic-preview','cnic')">
+            <span class="pic-cap" data-i18n="pic_cnic">CNIC Card Photo *</span>
+          </div>
+          <img id="fmcnic-preview" class="img-preview">
+        </div>
+      </div>
       <div class="admin-note" data-i18n="cnic_note">Your CNIC is used only to verify the sale — it is never shown to buyers.</div>
       <div class="field" style="margin-top:12px"><label data-i18n="t_notes">Notes</label><textarea id="f-notes" data-i18n-ph="t_notes_ph" placeholder="Health status, characteristics, vaccination..."></textarea></div>
       <div class="form-actions">
@@ -271,7 +296,6 @@
       <p style="color:var(--gray);font-size:14px;" data-i18n="admin_note">Enter the admin PIN to manage goat records and farmer submissions.</p>
       <input type="password" id="pin-input" maxlength="6" placeholder="••••" onkeydown="if(event.key==='Enter')tryPin()">
       <button class="btn btn-primary" style="width:100%" onclick="tryPin()" data-i18n="unlock">Unlock Admin</button>
-      <div class="admin-note">Default PIN: 1234 — you can change it inside Admin (Change PIN panel).</div>
     </div>
 
     <div id="admin-content" style="display:none">
@@ -311,8 +335,24 @@
           <div class="field"><label data-i18n="t_cnic_opt">CNIC Number (optional — 13 digits)</label><input id="a-cnic" data-i18n-ph="t_cnic_ph" placeholder="e.g. 36102-1234567-1" maxlength="15"></div>
           <div class="field"><label data-i18n="t_address">Address / Village</label><input id="a-address" data-i18n-ph="t_address_ph" placeholder="e.g. Chak 31/11-L, Chichawatni"></div>
         </div>
-        <div class="field" style="margin-top:12px"><label data-i18n="t_photo">Photo (required — auto-resized)</label><input type="file" id="a-photo" accept="image/*" onchange="handlePhoto(this,'a-photo-preview')"><img id="a-photo-preview" class="img-preview"></div>
-        <div class="field" style="margin-top:12px"><label data-i18n="t_cnic_photo_opt">CNIC Card Photo (optional)</label><input type="file" id="a-cnic-photo" accept="image/*" onchange="handlePhoto(this,'a-cnic-preview','cnic')"><img id="a-cnic-preview" class="img-preview"></div>
+        <div class="pic-grid">
+          <div class="pic-slot">
+            <div class="pic-main">
+              <label class="pic-btn" for="a-photo">📷 <span data-i18n="pic_add">Tap to add</span></label>
+              <input type="file" id="a-photo" class="pic-input" accept="image/*" onchange="handlePhoto(this,'a-photo-preview')">
+              <span class="pic-cap" data-i18n="pic_photo">Animal Photo *</span>
+            </div>
+            <img id="a-photo-preview" class="img-preview">
+          </div>
+          <div class="pic-slot">
+            <div class="pic-main">
+              <label class="pic-btn" for="a-cnic-photo">🪪 <span data-i18n="pic_add">Tap to add</span></label>
+              <input type="file" id="a-cnic-photo" class="pic-input" accept="image/*" onchange="handlePhoto(this,'a-cnic-preview','cnic')">
+              <span class="pic-cap" data-i18n="pic_cnic_opt">CNIC Card Photo</span>
+            </div>
+            <img id="a-cnic-preview" class="img-preview">
+          </div>
+        </div>
         <div class="field" style="margin-top:12px"><label data-i18n="t_notes">Notes</label><textarea id="a-notes" data-i18n-ph="t_notes_ph" placeholder="Health status, characteristics, vaccination..."></textarea></div>
         <div class="form-actions">
           <button class="btn btn-primary" id="btn-save" onclick="saveGoat()" data-i18n="save">💾 Save Record</button>
@@ -410,6 +450,7 @@ const I18N = {
     pin_title: '🔑 Change Admin PIN', pin_current: 'Current PIN', pin_new: 'New PIN (4-6 digits)', pin_save: '💾 Update PIN',
     pin_ok: '✓ Admin PIN updated', pin_wrong_cur: 'Current PIN is incorrect', pin_bad: 'New PIN must be 4-6 digits (and different)',
     pin_note: 'The PIN is stored on this device only. If you forget it, clear the site data in your browser to return to the default 1234.',
+    pic_photo: 'Animal Photo *', pic_cnic: 'CNIC Card Photo *', pic_cnic_opt: 'CNIC Card Photo', pic_add: 'Tap to add', pic_change: 'Change',
     my_note: 'Enter the same phone number you used when submitting your animal. Only approved (live) listings can be marked as sold.',
     breed_choose: 'Choose breed...', breed_other: 'Other (type below)',
     pub_farm_sec: '🏡 M.K Dhadra Farm Stock', pub_seller_sec: '🤝 Seller Listings', seller_empty: 'No approved seller listings yet — farmers\' submissions appear here after review.',
@@ -461,6 +502,7 @@ const I18N = {
     pin_title: '🔑 ایڈمن PIN تبدیل کریں', pin_current: 'موجودہ PIN', pin_new: 'نیا PIN (4-6 ہندسے)', pin_save: '💾 PIN اپ ڈیٹ کریں',
     pin_ok: '✓ ایڈمن PIN تبدیل ہو گیا', pin_wrong_cur: 'موجودہ PIN غلط ہے', pin_bad: 'نیا PIN چار سے چھ ہندسوں کا اور پرانے سے مختلف ہونا چاہیے',
     pin_note: 'PIN صرف اسی ڈیوائس پر محفوظ ہوتا ہے۔ اگر بھول جائیں تو براؤزر کا سائٹ ڈیٹا صاف کریں — پہلے والا 1234 واپس آ جائے گا۔',
+    pic_photo: 'جانور کی تصویر *', pic_cnic: 'شناختی کارڈ کی تصویر *', pic_cnic_opt: 'شناختی کارڈ کی تصویر', pic_add: 'تصویر لگائیں', pic_change: 'تبدیل کریں',
     my_note: 'جمع کروانے کے وقت والا وہی فون نمبر لکھیں۔ صرف منظور شدہ (لائیو) لسٹیں فروخت شدہ کی جا سکتی ہیں۔',
     t_cnic_opt: 'شناختی کارڈ نمبر (اختیاری — 13 ہندسے)', t_cnic_photo_opt: 'شناختی کارڈ کی تصویر (اختیاری)',
     breed_choose: 'نسل منتخب کریں...', breed_other: 'دیگر (نیچے لکھیں)',
@@ -745,7 +787,10 @@ function resetForm() {
   document.getElementById('a-source').value = 'farm';
   ['f-breed','a-breed'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
   ['f-breed-other','a-breed-other'].forEach(id => { const el = document.getElementById(id); if (el) el.style.display = 'none'; });
-  ['f-photo','a-photo','fm-cnic-photo','a-cnic-photo'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+  ['f-photo','a-photo','fm-cnic-photo','a-cnic-photo'].forEach(id => {
+    const el = document.getElementById(id); if (el) el.value = '';
+    const cap = document.querySelector('label[for="' + id + '"] span[data-i18n]'); if (cap) cap.textContent = t('pic_add');
+  });
   ['photo-preview','a-photo-preview','fmcnic-preview','a-cnic-preview'].forEach(id => { const el = document.getElementById(id); if (el) el.style.display = 'none'; });
   currentPhoto = null;
   currentCnicPhoto = null;
@@ -777,6 +822,8 @@ function editGoat(id) {
   document.getElementById('a-notes').value = g.notes || '';
   currentPhoto = g.photo || null;
   if (currentPhoto) { const pv = document.getElementById('a-photo-preview'); pv.src = currentPhoto; pv.style.display = 'block'; }
+  const apLbl = document.querySelector('label[for="a-photo"] span[data-i18n]'); if (apLbl) apLbl.textContent = currentPhoto ? t('pic_change') : t('pic_add');
+  const acLbl = document.querySelector('label[for="a-cnic-photo"] span[data-i18n]'); if (acLbl) acLbl.textContent = currentCnicPhoto ? t('pic_change') : t('pic_add');
   currentCnicPhoto = g.cnicPhoto || null;
   if (currentCnicPhoto) { const pv = document.getElementById('a-cnic-preview'); pv.src = currentCnicPhoto; pv.style.display = 'block'; }
   document.getElementById('form-title').textContent = '✏ ' + t('edit_b') + ': ' + g.name;
@@ -968,9 +1015,10 @@ function handlePhoto(input, previewId, kind) {
   const pvId = previewId || 'photo-preview';
   const isCnic = kind === 'cnic';
   const file = input.files && input.files[0];
+  const setLabel = (hasPhoto) => { const cap = document.querySelector('label[for="' + input.id + '"] span[data-i18n]'); if (cap) cap.textContent = hasPhoto ? t('pic_change') : t('pic_add'); };
   if (!file) {
     if (isCnic) currentCnicPhoto = null; else currentPhoto = null;
-    document.getElementById(pvId).style.display = 'none'; return;
+    document.getElementById(pvId).style.display = 'none'; setLabel(false); return;
   }
   const reader = new FileReader();
   reader.onload = e => {
@@ -983,6 +1031,7 @@ function handlePhoto(input, previewId, kind) {
       const data = c.toDataURL('image/jpeg', 0.8);
       if (isCnic) currentCnicPhoto = data; else currentPhoto = data;
       const pv = document.getElementById(pvId); pv.src = data; pv.style.display = 'block';
+      setLabel(true);
     };
     img.src = e.target.result;
   };
