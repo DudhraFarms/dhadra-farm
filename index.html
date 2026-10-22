@@ -152,6 +152,9 @@
   .foot-grid a { color: #fff; }
   .foot-bottom { text-align: center; padding: 12px; font-size: 12.5px; border-top: 1px solid rgba(255,255,255,.2); }
   footer .urdu { font-family: 'Noto Nastaliq Urdu', serif; }
+  .admin-tabs { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+  .admin-tab-btn { flex: 1; min-width: 130px; background: #fff; color: var(--green); border: 2px solid var(--green-2); padding: 10px 16px; border-radius: 12px; cursor: pointer; font-size: 14.5px; font-weight: 700; font-family: inherit; transition: all .2s; }
+  .admin-tab-btn.active { background: var(--green-2); color: #fff; }
   .admin-note { font-size: 12px; color: var(--gray); margin-top: 8px; }
   .pic-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
   .pic-slot { border: 1.5px dashed var(--border); border-radius: 12px; padding: 8px; display: flex; gap: 8px; align-items: center; background: #fff; }
@@ -166,7 +169,9 @@
   .my-meta { font-size: 12px; color: var(--gray); }
   .my-actions { display: flex; align-items: center; gap: 6px; }
   .img-preview { max-height: 120px; border-radius: 8px; margin-top: 6px; display: none; }
-  @media (max-width: 640px) { .form-grid { grid-template-columns: 1fr; } .hero { padding: 30px 22px; } .field input, .field select, .field textarea { font-size: 16px; padding: 11px 12px; } .stats { grid-template-columns: repeat(2, 1fr); } .grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; } header { padding: 12px 14px; flex-direction: column; align-items: stretch; } .hdr-right { flex-direction: column; align-items: stretch; } .tabs { justify-content: center; } .tab-btn, .lang-btn { padding: 10px 14px; font-size: 14px; text-align: center; } .filters { flex-direction: column; } .filters input, .filters select { width: 100%; } .section { font-size: 18px; } .goat-price { font-size: 16px; } .goat-meta { font-size: 11.5px; } table.goats { font-size: 12.5px; } .form-actions { flex-direction: column; } .form-actions .btn { width: 100%; } }
+  @media (max-width: 640px) { .form-grid { grid-template-columns: 1fr; } .hero { padding: 30px 22px; } .field input, .field select, .field textarea { font-size: 16px; padding: 11px 12px; } .stats { grid-template-columns: repeat(2, 1fr); } .grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; }   header { padding: 12px 14px; flex-direction: column; align-items: stretch; }
+  .admin-tabs { flex-direction: column; }
+  .admin-tab-btn { text-align: center; } .hdr-right { flex-direction: column; align-items: stretch; } .tabs { justify-content: center; } .tab-btn, .lang-btn { padding: 10px 14px; font-size: 14px; text-align: center; } .filters { flex-direction: column; } .filters input, .filters select { width: 100%; } .section { font-size: 18px; } .goat-price { font-size: 16px; } .goat-meta { font-size: 11.5px; } table.goats { font-size: 12.5px; } .form-actions { flex-direction: column; } .form-actions .btn { width: 100%; } }
 </style>
 </head>
 <body>
@@ -309,6 +314,11 @@
     </div>
 
     <div id="admin-content" style="display:none">
+      <div class="admin-tabs">
+        <button class="admin-tab-btn active" id="atab-sale" onclick="switchAdminTab('sale')">💰 <span data-i18n="sale_tab">Sale</span></button>
+        <button class="admin-tab-btn" id="atab-purchase" onclick="switchAdminTab('purchase')">🛒 <span data-i18n="pur_tab">Purchases</span></button>
+      </div>
+      <div id="admin-sale-tab">
       <div class="stats">
         <div class="stat total"><div class="num" id="st-total">0</div><div class="lbl" data-i18n="st_total">Total Records</div></div>
         <div class="stat avail"><div class="num" id="st-avail">0</div><div class="lbl" data-i18n="st_avail">Available (Released)</div></div>
@@ -406,6 +416,48 @@
         </div>
         <div class="admin-note" data-i18n="pin_note">The PIN is stored on this device only. If you forget it, clear the site data in your browser to return to the default 1234.</div>
       </div>
+      </div>
+
+      <div id="admin-purchase-tab" style="display:none">
+        <div class="stats">
+          <div class="stat"><div class="num" id="pt-count">0</div><div class="lbl" data-i18n="pur_count_stat">Purchases</div></div>
+          <div class="stat"><div class="num" id="pt-spend">0</div><div class="lbl" data-i18n="pur_spend">Total Spent (PKR)</div></div>
+          <div class="stat"><div class="num" id="pt-month">0</div><div class="lbl" data-i18n="pur_month">Spent This Month (PKR)</div></div>
+        </div>
+
+        <div class="panel">
+          <h3 id="pur-form-title" data-i18n="pur_add_title">➕ Add Purchase Record</h3>
+          <div class="form-grid">
+            <div class="field"><label data-i18n="p_date">Purchase Date</label><input type="date" id="p-date"></div>
+            <div class="field"><label data-i18n="t_tag">Tag / ID</label><input id="p-tag" placeholder="e.g. PB-001"></div>
+            <div class="field"><label data-i18n="t_name">Name</label><input id="p-name" placeholder="e.g. Raja"></div>
+            <div class="field"><label data-i18n="t_breed">Breed</label><select id="p-breed" onchange="onPurchaseBreedChange()"></select><input id="p-breed-other" placeholder="Type breed... / نسل لکھیں" style="display:none" maxlength="40"></div>
+            <div class="field"><label data-i18n="t_gender">Gender</label><select id="p-gender"><option data-i18n="male">Male</option><option data-i18n="female">Female</option></select></div>
+            <div class="field"><label data-i18n="t_age">Age (months)</label><input id="p-age" type="number" min="0" placeholder="12"></div>
+            <div class="field"><label data-i18n="t_weight">Weight (kg)</label><input id="p-weight" type="number" min="0" step="0.1" placeholder="40"></div>
+            <div class="field"><label data-i18n="p_price">Purchase Price (PKR)</label><input id="p-price" type="number" min="0" placeholder="85000"></div>
+            <div class="field"><label data-i18n="p_seller">Bought From (Seller)</label><input id="p-seller" placeholder="e.g. Ahmed Khan"></div>
+            <div class="field"><label data-i18n="p_sphone">Seller Phone</label><input id="p-sphone" data-i18n-ph="t_sphone_ph" placeholder="e.g. 0300-1234567"></div>
+            <div class="field"><label data-i18n="p_scnic">Seller CNIC (optional)</label><input id="p-scnic" data-i18n-ph="t_cnic_ph" placeholder="e.g. 36102-1234567-1" maxlength="15"></div>
+            <div class="field"><label data-i18n="t_notes">Notes</label><input id="p-notes" data-i18n-ph="t_notes_ph" placeholder="Condition, markings..."></div>
+          </div>
+          <div class="form-actions">
+            <button class="btn btn-primary" onclick="savePurchase()" data-i18n="pur_save">💾 Save Purchase</button>
+            <button class="btn btn-ghost" id="btn-pur-cancel" onclick="resetPurchaseForm()" style="display:none" data-i18n="my_cancel">Cancel</button>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3 data-i18n="pur_title">🛒 Purchase Records</h3>
+          <div style="overflow-x:auto">
+            <table class="goats">
+              <thead><tr><th data-i18n="p_date">Date</th><th data-i18n="t_tag">Tag</th><th data-i18n="t_name">Name</th><th data-i18n="t_breed">Breed</th><th data-i18n="p_seller">Seller</th><th data-i18n="p_price">Price (PKR)</th><th data-i18n="t_actions">Actions</th></tr></thead>
+              <tbody id="purchase-rows"></tbody>
+            </table>
+          </div>
+          <div id="purchase-empty" style="color:var(--gray);font-size:13.5px;padding:8px 0;" data-i18n="pur_empty">No purchases recorded yet.</div>
+        </div>
+      </div>
     </div>
   </section>
 </main>
@@ -462,6 +514,11 @@ const I18N = {
     pin_ok: '✓ Admin PIN updated', pin_wrong_cur: 'Current PIN is incorrect', pin_bad: 'New PIN must be 4-6 digits (and different)',
     pin_custom_hint: 'This device has a different admin PIN. Enter the synced admin PIN (set via Change PIN on the main device), or clear this site\'s data to use 1234.',
     pin_cloud_fail: 'cloud sync unavailable — saved on this device only',
+    sale_tab: '💰 Sale', pur_tab: '🛒 Purchases', pur_title: '🛒 Purchase Records', pur_add_title: '➕ Add Purchase Record',
+    p_date: 'Purchase Date', p_price: 'Purchase Price (PKR)', p_seller: 'Bought From (Seller)', p_sphone: 'Seller Phone', p_scnic: 'Seller CNIC (optional)',
+    pur_save: '💾 Save Purchase', pur_upd_title: '✏ Edit Purchase', pur_del_confirm: 'Delete this purchase?',
+    pur_empty: 'No purchases recorded yet.', pur_count_stat: 'Purchases', pur_spend: 'Total Spent (PKR)', pur_month: 'Spent This Month (PKR)',
+    toast_pur_add: 'Purchase added', toast_pur_upd: 'Purchase updated', toast_pur_del: 'Purchase deleted',
     pin_note: 'The PIN is stored on this device only. If you forget it, clear the site data in your browser to return to the default 1234.',
     pic_photo: 'Animal Photo *', pic_cnic: 'CNIC Card Photo *', pic_cnic_opt: 'CNIC Card Photo', pic_add: 'Tap to add', pic_change: 'Change',
     my_note: 'Enter the same phone number you used when submitting your animal. Only approved (live) listings can be marked as sold.',
@@ -519,6 +576,11 @@ const I18N = {
     pin_ok: '✓ ایڈمن PIN تبدیل ہو گیا', pin_wrong_cur: 'موجودہ PIN غلط ہے', pin_bad: 'نیا PIN چار سے چھ ہندسوں کا اور پرانے سے مختلف ہونا چاہیے',
     pin_custom_hint: 'اس ڈیوائس کا ایڈمن PIN مختلف ہے۔ سنک شدہ PIN درج کریں (بنیادی ڈیوائس سے Change PIN)، یا اس سائٹ کا ڈیٹا صاف کر کے 1234 استعمال کریں۔',
     pin_cloud_fail: 'کلاؤڈ سنک دستیاب نہیں — صرف اسی ڈیوائس پر محفوظ ہوا',
+    sale_tab: '💰 فروخت', pur_tab: '🛒 خریداری', pur_title: '🛒 خریداری ریکارڈ', pur_add_title: '➕ نئی خریداری درج کریں',
+    p_date: 'خریداری کی تاریخ', p_price: 'خریداری قیمت (روپے)', p_seller: 'کس سے خریدا (بیچنے والا)', p_sphone: 'بیچنے والے کا فون', p_scnic: 'بیچنے والے کا شناختی کارڈ (اختیاری)',
+    pur_save: '💾 خریداری محفوظ کریں', pur_upd_title: '✏ خریداری میں ترمیم', pur_del_confirm: 'یہ خریداری حذف کریں؟',
+    pur_empty: 'ابھی کوئی خریداری درج نہیں۔', pur_count_stat: 'خریداریاں', pur_spend: 'کل خرچ (روپے)', pur_month: 'اس مہینے کا خرچ (روپے)',
+    toast_pur_add: 'خریداری شامل ہو گئی', toast_pur_upd: 'خریداری اپ ڈیٹ ہو گئی', toast_pur_del: 'خریداری حذف ہو گئی',
     pin_note: 'PIN صرف اسی ڈیوائس پر محفوظ ہوتا ہے۔ اگر بھول جائیں تو براؤزر کا سائٹ ڈیٹا صاف کریں — پہلے والا 1234 واپس آ جائے گا۔',
     pic_photo: 'جانور کی تصویر *', pic_cnic: 'شناختی کارڈ کی تصویر *', pic_cnic_opt: 'شناختی کارڈ کی تصویر', pic_add: 'تصویر لگائیں', pic_change: 'تبدیل کریں',
     my_note: 'جمع کروانے کے وقت والا وہی فون نمبر لکھیں۔ صرف منظور شدہ (لائیو) لسٹیں فروخت شدہ کی جا سکتی ہیں۔',
@@ -564,7 +626,7 @@ const BREEDS = [
   ['Saanen', 'سانیں'], ['Alpine', 'ایلپائن'], ['Sirohi', 'سیروہی']
 ];
 function populateBreedSelects() {
-  ['f-breed', 'a-breed'].forEach(id => {
+  ['f-breed', 'a-breed', 'p-breed'].forEach(id => {
     const s = document.getElementById(id); if (!s) return;
     const cur = s.value;
     s.innerHTML = '<option value="">' + t('breed_choose') + '</option>' +
@@ -583,6 +645,7 @@ function getBreed(p) {
   return s.value === '__other__' ? (o ? o.value.trim() : '') : s.value;
 }
 let editingId = null;
+let editingPurchaseId = null;
 let currentPhoto = null;      // animal photo
 let currentCnicPhoto = null;  // seller CNIC card photo
 let adminUnlocked = false;
@@ -602,6 +665,125 @@ function findRecord(id) {
 }
 function saveStore(store, list) { if (store === 'seller') saveSellerRecords(list); else saveFarmRecords(list); }
 function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+
+/* ============ PURCHASES (for future profit & loss) ============ */
+const LS_PURCHASE_KEY = 'goatfarm_purchase_records';
+function getPurchases() { try { return JSON.parse(localStorage.getItem(LS_PURCHASE_KEY)) || []; } catch (e) { return []; } }
+function savePurchases(list) { localStorage.setItem(LS_PURCHASE_KEY, JSON.stringify(list)); }
+function switchAdminTab(tab) {
+  document.getElementById('atab-sale').classList.toggle('active', tab === 'sale');
+  document.getElementById('atab-purchase').classList.toggle('active', tab === 'purchase');
+  document.getElementById('admin-sale-tab').style.display = tab === 'sale' ? 'block' : 'none';
+  document.getElementById('admin-purchase-tab').style.display = tab === 'purchase' ? 'block' : 'none';
+  if (tab === 'purchase') renderPurchases();
+}
+function onPurchaseBreedChange() {
+  const s = document.getElementById('p-breed'); const o = document.getElementById('p-breed-other');
+  if (o) o.style.display = s.value === '__other__' ? 'block' : 'none';
+}
+function getPurchaseBreed() {
+  const s = document.getElementById('p-breed'); const o = document.getElementById('p-breed-other');
+  if (!s) return '';
+  return s.value === '__other__' ? (o ? o.value.trim() : '') : s.value;
+}
+function resetPurchaseForm() {
+  editingPurchaseId = null;
+  ['p-tag','p-name','p-breed-other','p-age','p-weight','p-price','p-seller','p-sphone','p-scnic','p-notes'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+  document.getElementById('p-gender').value = 'Male';
+  const bs = document.getElementById('p-breed'); if (bs) bs.value = '';
+  const bo = document.getElementById('p-breed-other'); if (bo) bo.style.display = 'none';
+  document.getElementById('p-date').value = new Date().toISOString().slice(0, 10);
+  document.getElementById('pur-form-title').textContent = t('pur_add_title');
+  document.getElementById('btn-pur-cancel').style.display = 'none';
+}
+function savePurchase() {
+  const date = document.getElementById('p-date').value;
+  const tag = document.getElementById('p-tag').value.trim();
+  const name = document.getElementById('p-name').value.trim();
+  const breed = getPurchaseBreed();
+  const price = +document.getElementById('p-price').value || 0;
+  const seller = document.getElementById('p-seller').value.trim();
+  const sellerPhone = document.getElementById('p-sphone').value.trim();
+  const sellerCnic = document.getElementById('p-scnic').value.trim();
+  if (!date) { toast(t('p_date') + ' — ' + t('toast_req')); return; }
+  if (!tag || !name || !breed) { toast(t('toast_req')); return; }
+  if (!price) { toast(t('toast_price')); return; }
+  if (!seller) { toast(t('toast_sname')); return; }
+  if (sellerCnic && !validCnic(sellerCnic)) { toast(t('toast_cnic_fmt')); return; }
+  const rec = {
+    id: editingPurchaseId || uid(), tag: tag, name: name, breed: breed,
+    gender: document.getElementById('p-gender').value,
+    age: +document.getElementById('p-age').value || 0,
+    weight: +document.getElementById('p-weight').value || 0,
+    price: price, purchaseDate: date,
+    sellerName: seller, sellerPhone: sellerPhone, sellerCnic: sellerCnic,
+    notes: document.getElementById('p-notes').value.trim(),
+    created: Date.now()
+  };
+  const list = getPurchases();
+  const idx = list.findIndex(r => r.id === rec.id);
+  if (idx >= 0) list[idx] = rec; else list.push(rec);
+  savePurchases(list);
+  const wasEditing = idx >= 0;
+  resetPurchaseForm(); renderPurchases();
+  toast(t(wasEditing ? 'toast_pur_upd' : 'toast_pur_add'));
+}
+function editPurchase(id) {
+  const rec = getPurchases().find(r => r.id === id);
+  if (!rec) return;
+  editingPurchaseId = id;
+  document.getElementById('p-date').value = rec.purchaseDate || new Date().toISOString().slice(0, 10);
+  document.getElementById('p-tag').value = rec.tag;
+  document.getElementById('p-name').value = rec.name;
+  const inList = BREEDS.some(b => b[0] === rec.breed);
+  document.getElementById('p-breed').value = inList ? rec.breed : '__other__';
+  const po = document.getElementById('p-breed-other');
+  po.style.display = inList ? 'none' : 'block';
+  if (!inList) po.value = rec.breed || '';
+  document.getElementById('p-gender').value = rec.gender || 'Male';
+  document.getElementById('p-age').value = rec.age;
+  document.getElementById('p-weight').value = rec.weight;
+  document.getElementById('p-price').value = rec.price;
+  document.getElementById('p-seller').value = rec.sellerName || '';
+  document.getElementById('p-sphone').value = rec.sellerPhone || '';
+  document.getElementById('p-scnic').value = rec.sellerCnic || '';
+  document.getElementById('p-notes').value = rec.notes || '';
+  document.getElementById('pur-form-title').textContent = '✏ ' + t('pur_upd_title');
+  document.getElementById('btn-pur-cancel').style.display = 'inline-block';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function deletePurchase(id) {
+  const rec = getPurchases().find(r => r.id === id);
+  if (!rec) return;
+  if (!confirm(t('pur_del_confirm') + ' "' + rec.name + '"?')) return;
+  savePurchases(getPurchases().filter(r => r.id !== id));
+  if (editingPurchaseId === id) resetPurchaseForm();
+  renderPurchases(); toast(t('toast_pur_del'));
+}
+function renderPurchases() {
+  const list = getPurchases();
+  document.getElementById('pt-count').textContent = list.length;
+  document.getElementById('pt-spend').textContent = Number(list.reduce((a, r) => a + (r.price || 0), 0)).toLocaleString();
+  const now = new Date();
+  const monthSpend = list.filter(r => { const d = new Date(r.purchaseDate); return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear(); }).reduce((a, r) => a + (r.price || 0), 0);
+  document.getElementById('pt-month').textContent = Number(monthSpend).toLocaleString();
+  const rows = document.getElementById('purchase-rows');
+  rows.innerHTML = '';
+  const empty = document.getElementById('purchase-empty');
+  empty.style.display = list.length ? 'none' : 'block';
+  list.slice().sort((a, b) => (b.purchaseDate || '').localeCompare(a.purchaseDate || '')).forEach(r => {
+    const tr = document.createElement('tr');
+    tr.innerHTML =
+      '<td>' + esc(r.purchaseDate || '-') + '</td><td>' + esc(r.tag) + '</td><td><b>' + esc(r.name) + '</b></td><td>' + esc(r.breed) + '</td>' +
+      '<td><div>' + esc(r.sellerName) + '</div><div class="seller-cell">' + esc(r.sellerPhone || '') + '</div></td>' +
+      '<td>' + Number(r.price || 0).toLocaleString() + '</td>' +
+      '<td><div class="actions-cell">' +
+        '<button class="btn-sm btn-edit" onclick="editPurchase(\'' + r.id + '\')">' + t('edit_b') + '</button>' +
+        '<button class="btn-sm btn-del" onclick="deletePurchase(\'' + r.id + '\')">' + t('del') + '</button>' +
+      '</div></td>';
+    rows.appendChild(tr);
+  });
+}
 
 /* ============ SAMPLE DATA ============ */
 function loadSample() {
@@ -1110,7 +1292,7 @@ function handlePhoto(input, previewId, kind) {
 
 /* ============ BACKUP ============ */
 function exportData() {
-  const blob = new Blob([JSON.stringify({ farm: getFarmRecords(), sellers: getSellerRecords(), adminPin: currentPin() }, null, 2)], { type: 'application/json' });
+  const blob = new Blob([JSON.stringify({ farm: getFarmRecords(), sellers: getSellerRecords(), purchases: getPurchases(), adminPin: currentPin() }, null, 2)], { type: 'application/json' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
   a.download = 'goat-records-backup-' + new Date().toISOString().slice(0, 10) + '.json';
@@ -1130,6 +1312,7 @@ function importData(input) {
         sellers = data.filter(r => r && (r.source === 'seller' || r.farmerName));
       } else if (data && Array.isArray(data.farm)) {  // new segregated backup
         farm = data.farm; sellers = data.sellers || [];
+        savePurchases(Array.isArray(data.purchases) ? data.purchases : getPurchases());
         if (data.adminPin && /^\d{4,6}$/.test(String(data.adminPin))) localStorage.setItem('dhadra_admin_pin', String(data.adminPin));
       } else throw 'bad format';
       saveFarmRecords(farm); saveSellerRecords(sellers); renderAll();
@@ -1169,6 +1352,7 @@ if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.
   navigator.serviceWorker.register('sw.js').catch(() => {});
 }
 populateBreedSelects();
+resetPurchaseForm();
 (function migrateStores() {
   if (localStorage.getItem(LS_FARMER_KEY) === null) {   // one-time: split old mixed list
     const farm = getFarmRecords();
