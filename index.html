@@ -69,24 +69,24 @@
   .filters input, .filters select { padding: 10px 14px; border: 1px solid var(--border); border-radius: 10px; font-size: 14px; background: #fff; color: var(--ink); }
   .filters input { flex: 1; min-width: 180px; }
 
-  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(255px, 1fr)); gap: 18px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(235px, 1fr)); gap: 12px; }
   .goat-card { background: var(--card); border-radius: 14px; overflow: hidden; box-shadow: 0 3px 12px rgba(36,51,24,.1); transition: transform .2s, box-shadow .2s; border: 1px solid var(--border); display: flex; flex-direction: column; }
   .goat-card:hover { transform: translateY(-4px); box-shadow: 0 8px 20px rgba(36,51,24,.18); }
-  .goat-photo { height: 180px; background: linear-gradient(135deg, #dce8d4, #eef2e2); display: flex; align-items: center; justify-content: center; font-size: 52px; position: relative; overflow: hidden; }
+  .goat-photo { height: 128px; background: linear-gradient(135deg, #dce8d4, #eef2e2); display: flex; align-items: center; justify-content: center; font-size: 40px; position: relative; overflow: hidden; }
   .goat-photo img { width: 100%; height: 100%; object-fit: cover; }
-  .goat-photo .status-badge { position: absolute; top: 10px; inset-inline-start: 10px; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 700; color: #fff; }
-  .seller-tag { position: absolute; bottom: 10px; inset-inline-end: 10px; background: rgba(27,94,32,.88); color: #fff; padding: 3px 10px; border-radius: 10px; font-size: 11.5px; }
-  .goat-body { padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
-  .goat-body h3 { font-size: 17px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .goat-photo .status-badge { position: absolute; top: 8px; inset-inline-start: 8px; padding: 3px 9px; border-radius: 10px; font-size: 11px; font-weight: 700; color: #fff; }
+  .seller-tag { position: absolute; bottom: 8px; inset-inline-end: 8px; background: rgba(27,94,32,.88); color: #fff; padding: 2px 8px; border-radius: 8px; font-size: 10.5px; }
+  .goat-body { padding: 11px 13px 12px; display: flex; flex-direction: column; gap: 4px; flex: 1; }
+  .goat-body h3 { font-size: 15.5px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
   .wa-inline { display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; background: var(--wa); border-radius: 50%; color: #fff; text-decoration: none; font-size: 13px; }
   .wa-inline:hover { background: var(--wa-dark); }
-  .goat-body .breed { color: var(--gray); font-size: 13.5px; }
-  .goat-meta { display: flex; gap: 14px; font-size: 13px; color: var(--gray); flex-wrap: wrap; }
-  .goat-price { font-size: 19px; font-weight: 700; color: var(--terra); margin-top: auto; padding-top: 6px; }
+  .goat-body .breed { color: var(--gray); font-size: 12.5px; }
+  .goat-meta { display: flex; gap: 10px; font-size: 12px; color: var(--gray); flex-wrap: wrap; }
+  .goat-price { font-size: 17px; font-weight: 700; color: var(--terra); margin-top: auto; padding-top: 5px; }
   .cta-row { display: flex; gap: 8px; margin-top: 8px; }
-  .contact-cta { flex: 1; background: var(--green-2); color: #fff; text-align: center; padding: 9px 6px; border-radius: 9px; font-size: 13px; font-weight: 600; text-decoration: none; transition: background .2s; }
+  .contact-cta { flex: 1; background: var(--green-2); color: #fff; text-align: center; padding: 7px 6px; border-radius: 8px; font-size: 12.5px; font-weight: 600; text-decoration: none; transition: background .2s; }
   .contact-cta:hover { background: var(--green); }
-  .wa-btn { background: var(--wa); color: #fff; text-align: center; padding: 9px 12px; border-radius: 9px; font-size: 13px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; transition: background .2s; }
+  .wa-btn { background: var(--wa); color: #fff; text-align: center; padding: 7px 10px; border-radius: 8px; font-size: 12.5px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; transition: background .2s; }
   .wa-btn:hover { background: var(--wa-dark); }
 
   .empty { text-align: center; padding: 50px 20px; color: var(--gray); background: #fff; border-radius: 14px; border: 1px dashed var(--border); }
@@ -162,7 +162,7 @@
   .my-meta { font-size: 12px; color: var(--gray); }
   .my-actions { display: flex; align-items: center; gap: 6px; }
   .img-preview { max-height: 120px; border-radius: 8px; margin-top: 6px; display: none; }
-  @media (max-width: 640px) { .form-grid { grid-template-columns: 1fr; } .hero { padding: 30px 22px; } .field input, .field select, .field textarea { font-size: 16px; padding: 11px 12px; } .stats { grid-template-columns: repeat(2, 1fr); } .grid { grid-template-columns: 1fr; } header { padding: 12px 14px; flex-direction: column; align-items: stretch; } .hdr-right { flex-direction: column; align-items: stretch; } .tabs { justify-content: center; } .tab-btn, .lang-btn { padding: 10px 14px; font-size: 14px; text-align: center; } .cta-row { flex-direction: column; } .cta-row a { text-align: center; } .filters { flex-direction: column; } .filters input, .filters select { width: 100%; } .section { font-size: 18px; } .goat-price { font-size: 17px; } .goat-meta { font-size: 12px; } table.goats { font-size: 12.5px; } .form-actions { flex-direction: column; } .form-actions .btn { width: 100%; } }
+  @media (max-width: 640px) { .form-grid { grid-template-columns: 1fr; } .hero { padding: 30px 22px; } .field input, .field select, .field textarea { font-size: 16px; padding: 11px 12px; } .stats { grid-template-columns: repeat(2, 1fr); } .grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; } header { padding: 12px 14px; flex-direction: column; align-items: stretch; } .hdr-right { flex-direction: column; align-items: stretch; } .tabs { justify-content: center; } .tab-btn, .lang-btn { padding: 10px 14px; font-size: 14px; text-align: center; } .filters { flex-direction: column; } .filters input, .filters select { width: 100%; } .section { font-size: 18px; } .goat-price { font-size: 16px; } .goat-meta { font-size: 11.5px; } table.goats { font-size: 12.5px; } .form-actions { flex-direction: column; } .form-actions .btn { width: 100%; } }
 </style>
 </head>
 <body>
@@ -429,6 +429,7 @@ const I18N = {
     sort_new: 'Newest first', sort_pa: 'Price: low to high', sort_pd: 'Price: high to low', sort_aa: 'Youngest first',
     male: 'Male', female: 'Female',
     available: 'Available', sold_l: 'Sold', mo: 'mo',
+    seller_farm: 'M.K Dhadra Goat Farm', seller_by: 'Seller:',
     call: '📞 Call', wa: '💬 WhatsApp',
     empty1: 'No animals match your filters right now.', empty2: 'New stock is released regularly — check back soon.',
     contact_sec: 'Contact & Visit Us', c_gm: 'General Manager', c_phone: 'Phone / WhatsApp', c_addr: 'Address',
@@ -481,6 +482,7 @@ const I18N = {
     sort_new: 'نئی پہلے', sort_pa: 'قیمت: کم سے زیادہ', sort_pd: 'قیمت: زیادہ سے کم', sort_aa: 'کم عمر پہلے',
     male: 'نر', female: 'مادہ',
     available: 'دستیاب', sold_l: 'فروخت', mo: 'مہینہ',
+    seller_farm: 'ایم۔کے دھدرا گوٹ فارم', seller_by: 'بیچنے والا:',
     call: '📞 کال', wa: '💬 واٹس ایپ',
     empty1: 'اس وقت آپ کے فلٹر پر کوئی بکری پوری نہیں اتری۔', empty2: 'نیا اسٹاک باقاعدگی سے شائع ہوتا ہے — دوبارہ تشریف لائیں۔',
     pub_farm_sec: '🏡 ایم۔کے دھدرا فارم کے جانور', pub_seller_sec: '🤝 کسانوں کی فروخت لسٹیں', seller_empty: 'ابھی کوئی منظور شدہ کسان لسٹیں نہیں — جائزے کے بعد یہاں آئیں گی۔',
