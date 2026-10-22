@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>M.K Dhadra Goat Farm - Goats for Sale | ایم۔کے دھدرا گوٹ فارم</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;700&family=Noto+Naskh+Arabic:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#1b5e20">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Dhadra Farm">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+  :root {
+    --green: #1b5e20;
+    --green-2: #2e7d32;
+    --green-3: #388e3c;
+    --cream: #fdf8e9;
+    --cream-2: #f7f0d8;
+    --terra: #c1663e;
+    --ink: #243318;
+    --gray: #6b7263;
+    --card: #ffffff;
+    --border: #e0d9c5;
+    --green-ok: #2e7d32;
+    --red-warn: #b3402a;
+    --amber: #b8860b;
+    --blue-info: #1565c0;
+    --wa: #25d366;
+    --wa-dark: #1da851;
+    --zebra: #f6f2e2;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--cream); color: var(--ink); }
+  [dir="rtl"] body, html[dir="rtl"] body { font-family: 'Noto Naskh Arabic', 'Segoe UI', Tahoma, sans-serif; }
+  .urdu { font-family: 'Noto Nastaliq Urdu', serif; line-height: 2; }
+
+  header { background: linear-gradient(135deg, #1b5e20, #2e7d32); color: #fff; padding: 12px 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; position: sticky; top: 0; z-index: 50; box-shadow: 0 2px 10px rgba(0,0,0,.2); }
+  .brand { display: flex; align-items: center; gap: 12px; }
+  .brand .logo { width: 44px; height: 44px; border-radius: 50%; overflow: hidden; flex-shrink: 0; }
+  .brand .logo img { width: 100%; height: 100%; object-fit: contain; display: block; }
+  .brand .names { display: flex; flex-direction: column; line-height: 1.25; }
+  .brand .names .en { font-size: 17px; font-weight: 700; letter-spacing: .4px; }
+  .brand .names .ur { font-family: 'Noto Nastaliq Urdu', serif; font-size: 15px; color: #dcedc8; }
+  .hdr-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .tabs { display: flex; gap: 8px; flex-wrap: wrap; }
+  .tab-btn { background: transparent; border: 1px solid rgba(255,255,255,.45); color: #fff; padding: 8px 16px; border-radius: 20px; cursor: pointer; font-size: 13.5px; transition: all .2s; font-family: inherit; }
+  .tab-btn:hover { background: rgba(255,255,255,.15); }
+  .tab-btn.active { background: #fff; color: var(--green); font-weight: 700; border-color: #fff; }
+  .lang-btn { background: #fff; color: var(--green); border: none; padding: 8px 16px; border-radius: 20px; cursor: pointer; font-size: 13.5px; font-weight: 700; font-family: inherit; }
+  .lang-btn:hover { background: var(--cream-2); }
+
+  main { max-width: 1150px; margin: 0 auto; padding: 24px 20px 60px; }
+  .view { display: none; }
+  .view.active { display: block; }
+
+  h2.section { font-size: 21px; margin: 18px 0 14px; color: var(--green); border-inline-start: 5px solid var(--terra); padding-inline-start: 12px; }
+  .hero { background: linear-gradient(135deg, var(--green-2), var(--green)); color: #fff; border-radius: 16px; padding: 40px 34px; margin-bottom: 26px; }
+  .hero h1 { font-size: 29px; margin-bottom: 8px; }
+  .hero p { font-size: 16px; opacity: .95; max-width: 700px; }
+  .hero .badge { display: inline-block; background: rgba(255,255,255,.2); padding: 4px 14px; border-radius: 14px; font-size: 13px; margin-bottom: 12px; }
+
+  .filters { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
+  .filters input, .filters select { padding: 10px 14px; border: 1px solid var(--border); border-radius: 10px; font-size: 14px; background: #fff; color: var(--ink); }
+  .filters input { flex: 1; min-width: 180px; }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(255px, 1fr)); gap: 18px; }
+  .goat-card { background: var(--card); border-radius: 14px; overflow: hidden; box-shadow: 0 3px 12px rgba(36,51,24,.1); transition: transform .2s, box-shadow .2s; border: 1px solid var(--border); display: flex; flex-direction: column; }
+  .goat-card:hover { transform: translateY(-4px); box-shadow: 0 8px 20px rgba(36,51,24,.18); }
+  .goat-photo { height: 180px; background: linear-gradient(135deg, #dce8d4, #eef2e2); display: flex; align-items: center; justify-content: center; font-size: 52px; position: relative; overflow: hidden; }
+  .goat-photo img { width: 100%; height: 100%; object-fit: cover; }
+  .goat-photo .status-badge { position: absolute; top: 10px; inset-inline-start: 10px; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 700; color: #fff; }
+  .seller-tag { position: absolute; bottom: 10px; inset-inline-end: 10px; background: rgba(27,94,32,.88); color: #fff; padding: 3px 10px; border-radius: 10px; font-size: 11.5px; }
+  .goat-body { padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
+  .goat-body h3 { font-size: 17px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .wa-inline { display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; background: var(--wa); border-radius: 50%; color: #fff; text-decoration: none; font-size: 13px; }
+  .wa-inline:hover { background: var(--wa-dark); }
+  .goat-body .breed { color: var(--gray); font-size: 13.5px; }
+  .goat-meta { display: flex; gap: 14px; font-size: 13px; color: var(--gray); flex-wrap: wrap; }
+  .goat-price { font-size: 19px; font-weight: 700; color: var(--terra); margin-top: auto; padding-top: 6px; }
+  .cta-row { display: flex; gap: 8px; margin-top: 8px; }
+  .contact-cta { flex: 1; background: var(--green-2); color: #fff; text-align: center; padding: 9px 6px; border-radius: 9px; font-size: 13px; font-weight: 600; text-decoration: none; transition: background .2s; }
+  .contact-cta:hover { background: var(--green); }
+  .wa-btn { background: var(--wa); color: #fff; text-align: center; padding: 9px 12px; border-radius: 9px; font-size: 13px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; transition: background .2s; }
+  .wa-btn:hover { background: var(--wa-dark); }
+
+  .empty { text-align: center; padding: 50px 20px; color: var(--gray); background: #fff; border-radius: 14px; border: 1px dashed var(--border); }
+  .empty .big { font-size: 44px; margin-bottom: 8px; }
+
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(135px, 1fr)); gap: 12px; margin-bottom: 22px; }
+  .stat { background: #fff; border-radius: 12px; padding: 15px; text-align: center; border: 1px solid var(--border); box-shadow: 0 2px 6px rgba(36,51,24,.06); }
+  .stat .num { font-size: 25px; font-weight: 800; }
+  .stat .lbl { font-size: 12px; color: var(--gray); margin-top: 2px; }
+  .stat.total .num { color: var(--green); }
+  .stat.avail .num { color: var(--green-ok); }
+  .stat.pending .num { color: var(--amber); }
+  .stat.sold .num { color: var(--red-warn); }
+  .stat.draft .num { color: #8d6e63; }
+
+  .panel { background: #fff; border-radius: 14px; border: 1px solid var(--border); padding: 22px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(36,51,24,.06); }
+  .panel h3 { font-size: 16px; margin-bottom: 14px; color: var(--green); }
+  .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; }
+  .field { display: flex; flex-direction: column; gap: 4px; }
+  .field label { font-size: 12.5px; font-weight: 600; color: var(--gray); }
+  .field input, .field select, .field textarea { padding: 9px 12px; border: 1px solid var(--border); border-radius: 9px; font-size: 14px; font-family: inherit; }
+  [dir="rtl"] .field input, [dir="rtl"] .field select, [dir="rtl"] .field textarea { font-family: 'Noto Naskh Arabic', sans-serif; }
+  .field textarea { resize: vertical; min-height: 60px; }
+  .form-actions { margin-top: 14px; display: flex; gap: 10px; flex-wrap: wrap; }
+  .btn { padding: 10px 22px; border-radius: 9px; border: none; cursor: pointer; font-size: 14px; font-weight: 600; transition: all .2s; font-family: inherit; }
+  .btn-primary { background: var(--terra); color: #fff; }
+  .btn-primary:hover { background: #a3522f; }
+  .btn-ghost { background: #fff; color: var(--gray); border: 1px solid var(--border); }
+  .btn-ghost:hover { background: var(--cream-2); }
+  .btn-sm { padding: 6px 12px; font-size: 12.5px; border-radius: 7px; border: none; cursor: pointer; font-weight: 600; }
+  .btn-release { background: var(--green-ok); color: #fff; }
+  .btn-unrelease { background: var(--amber); color: #fff; }
+  .btn-sold { background: var(--terra); color: #fff; }
+  .btn-approve { background: var(--blue-info); color: #fff; }
+  .btn-edit { background: var(--green-2); color: #fff; }
+  .btn-del { background: var(--red-warn); color: #fff; }
+
+  table.goats { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  table.goats th { background: var(--green); color: #fff; padding: 10px 8px; text-align: start; font-size: 12.5px; white-space: nowrap; }
+  table.goats td { padding: 9px 8px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+  table.goats tr:hover td { background: var(--zebra); }
+  .st-pill { padding: 3px 10px; border-radius: 10px; font-size: 11.5px; font-weight: 700; color: #fff; display: inline-block; }
+  .st-released { background: var(--green-ok); }
+  .st-draft { background: #8d6e63; }
+  .st-sold { background: var(--red-warn); }
+  .st-pending { background: var(--amber); }
+  .actions-cell { display: flex; gap: 5px; flex-wrap: wrap; }
+  .seller-cell { font-size: 12px; color: var(--gray); }
+
+  .tools { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-top: 10px; }
+  .toast { position: fixed; bottom: 26px; inset-inline-end: 26px; background: var(--ink); color: #fff; padding: 13px 22px; border-radius: 10px; font-size: 14px; box-shadow: 0 6px 18px rgba(0,0,0,.25); opacity: 0; transform: translateY(15px); transition: all .3s; z-index: 200; pointer-events: none; max-width: 360px; }
+  .toast.show { opacity: 1; transform: translateY(0); }
+  .pin-gate { max-width: 380px; margin: 60px auto; text-align: center; }
+  .pin-gate input { width: 100%; padding: 12px; text-align: center; font-size: 20px; letter-spacing: 8px; border: 1px solid var(--border); border-radius: 10px; margin: 14px 0; }
+  footer { background: linear-gradient(135deg, #1b5e20, #2e7d32); color: rgba(255,255,255,.9); margin-top: 30px; }
+  .foot-grid { max-width: 1150px; margin: 0 auto; padding: 26px 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 20px; }
+  .foot-grid h4 { font-size: 15px; margin-bottom: 10px; color: #dcedc8; }
+  .foot-grid .line { font-size: 13.5px; margin-bottom: 6px; }
+  .foot-grid a { color: #fff; }
+  .foot-bottom { text-align: center; padding: 12px; font-size: 12.5px; border-top: 1px solid rgba(255,255,255,.2); }
+  footer .urdu { font-family: 'Noto Nastaliq Urdu', serif; }
+  .admin-note { font-size: 12px; color: var(--gray); margin-top: 8px; }
+  .img-preview { max-height: 120px; border-radius: 8px; margin-top: 6px; display: none; }
+  @media (max-width: 640px) { .form-grid { grid-template-columns: 1fr; } .hero { padding: 30px 22px; } }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <div class="logo"><img src="dhadra-logo.png" alt="Dhadra Dairy Farms"></div>
+    <div class="names">
+      <span class="en">M.K Dhadra Goat Farm</span>
+      <span class="ur urdu">ایم۔کے دھدرا گوٹ فارم</span>
+    </div>
+  </div>
+  <div class="hdr-right">
+    <nav class="tabs">
+      <button class="tab-btn active" id="tab-public" onclick="switchTab('public')"><span data-i18n="nav_public">🌍 Public</span></button>
+      <button class="tab-btn" id="tab-farmer" onclick="switchTab('farmer')"><span data-i18n="nav_farmer">➕ Sell Your Goat</span></button>
+      <button class="tab-btn" id="tab-admin" onclick="switchTab('admin')"><span data-i18n="nav_admin">🔐 Admin</span></button>
+    </nav>
+    <button class="lang-btn" id="lang-btn" onclick="toggleLang()">اردو</button>
+  </div>
+</header>
+
+<main>
+  <!-- ============ PUBLIC ============ -->
+  <section id="public-view" class="view active">
+    <div class="hero">
+      <span class="badge" data-i18n="badge">Livestock For Sale</span>
+      <h1><span data-i18n="hero_title">Find Your Perfect Goat</span> <span class="urdu" style="font-size:22px;">| ایم۔کے دھدرا گوٹ فارم</span></h1>
+      <p data-i18n="hero_p">Raised free-range with natural feed and full veterinary care. Browse the animals currently available for sale — from our farm and trusted partner farmers.</p>
+    </div>
+
+    <h2 class="section" data-i18n="pub_farm_sec">🏡 M.K Dhadra Farm Stock</h2>
+    <div class="filters">
+      <input type="text" id="pub-search" data-i18n-ph="search_ph" placeholder="Search by name or ID..." oninput="renderPublic()">
+      <select id="pub-breed" onchange="renderPublic()"><option value="" data-i18n="all_breeds">All breeds</option></select>
+      <select id="pub-gender" onchange="renderPublic()"><option value="" data-i18n="all_genders">All genders</option><option data-i18n="male">Male</option><option data-i18n="female">Female</option></select>
+      <select id="pub-sort" onchange="renderPublic()">
+        <option value="new" data-i18n="sort_new">Newest first</option>
+        <option value="price-asc" data-i18n="sort_pa">Price: low to high</option>
+        <option value="price-desc" data-i18n="sort_pd">Price: high to low</option>
+        <option value="age-asc" data-i18n="sort_aa">Youngest first</option>
+      </select>
+    </div>
+    <div id="public-grid" class="grid"></div>
+    <div id="public-empty" class="empty" style="display:none"><div class="big">🐐</div><span data-i18n="empty1">No animals match your filters right now.</span><br><span data-i18n="empty2">New stock is released regularly — check back soon.</span></div>
+
+    <h2 class="section" data-i18n="pub_seller_sec">🤝 Seller Listings</h2>
+    <div id="seller-grid" class="grid"></div>
+    <div id="seller-empty" class="empty" style="display:none"><div class="big">🤝</div><span data-i18n="seller_empty">No approved seller listings yet — farmers' submissions appear here after review.</span></div>
+
+    <!-- Contact & location from the business card -->
+    <h2 class="section" data-i18n="contact_sec">Contact & Visit Us</h2>
+    <div class="stats">
+      <div class="stat" style="text-align:start"><div class="lbl" style="font-weight:700;color:var(--green)" data-i18n="c_gm">General Manager</div><div class="num" style="font-size:15px;">Dr. UbaidUllah Waqas <span class="urdu" style="font-size:13px;">ڈاکٹر عبیداللہ وقاص</span></div><div class="lbl">&nbsp;</div></div>
+      <div class="stat" style="text-align:start"><div class="lbl" style="font-weight:700;color:var(--green)" data-i18n="c_phone">Phone / WhatsApp</div><div class="num" style="font-size:15px;"><a href="tel:+923225026723" style="color:inherit;text-decoration:none;">+92 322 502 6723</a></div><div class="lbl">WhatsApp available</div></div>
+      <div class="stat" style="text-align:start"><div class="lbl" style="font-weight:700;color:var(--green)" data-i18n="c_addr">Address</div><div class="num" style="font-size:14.5px;">Chak # 31/11/L,<br>Hussan Abdaal, Chichawatni</div><div class="lbl urdu" style="font-size:12.5px;">چک نمبر L/31/11، حسن ابدال، تحصیل چیچہ وطنی، ساہیوال</div></div>
+      <div class="stat" style="text-align:start"><div class="lbl" style="font-weight:700;color:var(--green)">Email</div><div class="num" style="font-size:13.5px;word-break:break-all;"><a href="mailto:obaidullah310220@gmail.com" style="color:inherit;">obaidullah310220@gmail.com</a></div><div class="lbl">&nbsp;</div></div>
+    </div>
+  </section>
+
+  <!-- ============ FARMER ============ -->
+  <section id="farmer-view" class="view">
+    <div class="hero" style="background:linear-gradient(135deg,#b8860b,#8d6e63)">
+      <span class="badge" data-i18n="farmer_badge">For Partner Farmers</span>
+      <h1 data-i18n="farmer_hero">Sell Your Goat With Us</h1>
+      <p data-i18n="farmer_hero_p">List your animal on our platform. Submissions are reviewed by the farm admin before going live on the public site.</p>
+    </div>
+
+    <div class="panel">
+      <h3 data-i18n="sub_title">➕ Submit Your Goat for Sale</h3>
+      <div class="form-grid">
+        <div class="field"><label data-i18n="f_farmer">Your Name (farmer)</label><input id="fm-name" data-i18n-ph="f_farmer_ph" placeholder="e.g. Ahmed Khan"></div>
+        <div class="field"><label data-i18n="f_phone">Your Phone / WhatsApp</label><input id="fm-phone" data-i18n-ph="f_phone_ph" placeholder="e.g. 0300-1234567"></div>
+        <div class="field"><label data-i18n="t_address">Address / Village</label><input id="fm-address" data-i18n-ph="t_address_ph" placeholder="e.g. Chak 31/11-L, Chichawatni"></div>
+        <div class="field"><label data-i18n="t_cnic">CNIC Number (13 digits)</label><input id="fm-cnic" data-i18n-ph="t_cnic_ph" placeholder="e.g. 36102-1234567-1" maxlength="15"></div>
+        <div class="field"><label data-i18n="t_tag">Tag / ID</label><input id="f-tag" data-i18n-ph="t_tag_ph" placeholder="e.g. AK-012"></div>
+        <div class="field"><label data-i18n="t_name">Name</label><input id="f-name" data-i18n-ph="t_name_ph" placeholder="e.g. Shahzadi"></div>
+        <div class="field"><label data-i18n="t_breed">Breed</label><input id="f-breed" list="breedList" data-i18n-ph="t_breed_ph" placeholder="e.g. Beetal"><datalist id="breedList"><option>Beetal</option><option>Boer</option><option>Damascus</option><option>Nubian</option><option>Sirohi</option><option>Teddi</option></datalist></div>
+        <div class="field"><label data-i18n="t_gender">Gender</label><select id="f-gender"><option data-i18n="male">Male</option><option data-i18n="female">Female</option></select></div>
+        <div class="field"><label data-i18n="t_age">Age (months)</label><input id="f-age" type="number" min="0" placeholder="14"></div>
+        <div class="field"><label data-i18n="t_weight">Weight (kg)</label><input id="f-weight" type="number" min="0" step="0.1" placeholder="45.5"></div>
+        <div class="field"><label data-i18n="t_price">Asking Price (PKR)</label><input id="f-price" type="number" min="0" placeholder="110000"></div>
+      </div>
+      <div class="field" style="margin-top:12px"><label data-i18n="t_photo">Photo (required — auto-resized)</label><input type="file" id="f-photo" accept="image/*" onchange="handlePhoto(this,'photo-preview')"><img id="photo-preview" class="img-preview"></div>
+      <div class="field" style="margin-top:12px"><label data-i18n="t_cnic_photo">CNIC Card Photo (required)</label><input type="file" id="fm-cnic-photo" accept="image/*" onchange="handlePhoto(this,'fmcnic-preview','cnic')"><img id="fmcnic-preview" class="img-preview"></div>
+      <div class="admin-note" data-i18n="cnic_note">Your CNIC is used only to verify the sale — it is never shown to buyers.</div>
+      <div class="field" style="margin-top:12px"><label data-i18n="t_notes">Notes</label><textarea id="f-notes" data-i18n-ph="t_notes_ph" placeholder="Health status, characteristics, vaccination..."></textarea></div>
+      <div class="form-actions">
+        <button class="btn btn-primary" onclick="submitFarmerGoat()" data-i18n="submit_btn">📨 Submit for Review</button>
+        <button class="btn btn-ghost" onclick="resetForm()" data-i18n="clear">Clear Form</button>
+      </div>
+      <div class="admin-note" data-i18n="submit_note">Submissions are reviewed by the farm admin before appearing on the public site.</div>
+    </div>
+  </section>
+
+  <!-- ============ ADMIN ============ -->
+  <section id="admin-view" class="view">
+    <div id="pin-gate" class="pin-gate panel">
+      <h2 class="section" style="border:none;padding:0;text-align:center;" data-i18n="admin_title">🔐 Admin Access</h2>
+      <p style="color:var(--gray);font-size:14px;" data-i18n="admin_note">Enter the admin PIN to manage goat records and farmer submissions.</p>
+      <input type="password" id="pin-input" maxlength="6" placeholder="••••" onkeydown="if(event.key==='Enter')tryPin()">
+      <button class="btn btn-primary" style="width:100%" onclick="tryPin()" data-i18n="unlock">Unlock Admin</button>
+      <div class="admin-note">Default PIN: 1234 — change it in the code (ADMIN_PIN).</div>
+    </div>
+
+    <div id="admin-content" style="display:none">
+      <div class="stats">
+        <div class="stat total"><div class="num" id="st-total">0</div><div class="lbl" data-i18n="st_total">Total Records</div></div>
+        <div class="stat avail"><div class="num" id="st-avail">0</div><div class="lbl" data-i18n="st_avail">Available (Released)</div></div>
+        <div class="stat pending"><div class="num" id="st-pending">0</div><div class="lbl" data-i18n="st_pending">Farmer Submissions</div></div>
+        <div class="stat sold"><div class="num" id="st-sold">0</div><div class="lbl" data-i18n="st_sold">Sold</div></div>
+        <div class="stat draft"><div class="num" id="st-draft">0</div><div class="lbl" data-i18n="st_draft">Drafts (Hidden)</div></div>
+      </div>
+
+      <div class="panel">
+        <h3 data-i18n="pend_title">✅ Farmer Submissions (Pending Review)</h3>
+        <div style="overflow-x:auto">
+          <table class="goats">
+            <thead><tr><th data-i18n="f_farmer">Farmer</th><th data-i18n="f_phone">Contact</th><th data-i18n="t_cnic">CNIC</th><th data-i18n="t_tag">Tag</th><th data-i18n="t_name">Name</th><th data-i18n="t_breed">Breed</th><th data-i18n="t_age">Age</th><th data-i18n="t_price">Price (PKR)</th><th data-i18n="t_actions">Actions</th></tr></thead>
+            <tbody id="pending-rows"></tbody>
+          </table>
+        </div>
+        <div id="pending-empty" style="color:var(--gray);font-size:13.5px;padding:8px 0;" data-i18n="pend_empty">No pending submissions — all clear.</div>
+      </div>
+
+      <div class="panel">
+        <h3 id="form-title" data-i18n="form_title">➕ Add New Goat Record</h3>
+        <div class="form-grid">
+          <div class="field"><label data-i18n="t_source">Listing Source</label><select id="a-source"><option value="farm" data-i18n="src_farm">M.K Dhadra Farm</option><option value="seller" data-i18n="src_seller">Seller (Farmer)</option></select></div>
+          <div class="field"><label data-i18n="t_tag">Tag / ID</label><input id="a-tag" data-i18n-ph="t_tag_ph" placeholder="e.g. GR-001"></div>
+          <div class="field"><label data-i18n="t_name">Name</label><input id="a-name" data-i18n-ph="t_name_ph" placeholder="e.g. Bella"></div>
+          <div class="field"><label data-i18n="t_breed">Breed</label><input id="a-breed" list="breedList" data-i18n-ph="t_breed_ph" placeholder="e.g. Boer"></div>
+          <div class="field"><label data-i18n="t_gender">Gender</label><select id="a-gender"><option data-i18n="male">Male</option><option data-i18n="female">Female</option></select></div>
+          <div class="field"><label data-i18n="t_age">Age (months)</label><input id="a-age" type="number" min="0" placeholder="14"></div>
+          <div class="field"><label data-i18n="t_weight">Weight (kg)</label><input id="a-weight" type="number" min="0" step="0.1" placeholder="45.5"></div>
+          <div class="field"><label data-i18n="t_price">Price (PKR)</label><input id="a-price" type="number" min="0" placeholder="145000"></div>
+          <div class="field"><label data-i18n="t_status">Status</label><select id="a-status"><option value="released" data-i18n="st_avail">Released</option><option value="draft" data-i18n="st_draft">Draft</option><option value="sold" data-i18n="st_sold">Sold</option></select></div>
+          <div class="field"><label data-i18n="t_sname">Seller Name</label><input id="a-farmername" data-i18n-ph="t_sname_ph" placeholder="e.g. Ahmed Khan"></div>
+          <div class="field"><label data-i18n="t_sphone">Seller Phone / WhatsApp</label><input id="a-farmphone" data-i18n-ph="t_sphone_ph" placeholder="e.g. 0300-1234567"></div>
+          <div class="field"><label data-i18n="t_cnic_opt">CNIC Number (optional — 13 digits)</label><input id="a-cnic" data-i18n-ph="t_cnic_ph" placeholder="e.g. 36102-1234567-1" maxlength="15"></div>
+          <div class="field"><label data-i18n="t_address">Address / Village</label><input id="a-address" data-i18n-ph="t_address_ph" placeholder="e.g. Chak 31/11-L, Chichawatni"></div>
+        </div>
+        <div class="field" style="margin-top:12px"><label data-i18n="t_photo">Photo (required — auto-resized)</label><input type="file" id="a-photo" accept="image/*" onchange="handlePhoto(this,'a-photo-preview')"><img id="a-photo-preview" class="img-preview"></div>
+        <div class="field" style="margin-top:12px"><label data-i18n="t_cnic_photo_opt">CNIC Card Photo (optional)</label><input type="file" id="a-cnic-photo" accept="image/*" onchange="handlePhoto(this,'a-cnic-preview','cnic')"><img id="a-cnic-preview" class="img-preview"></div>
+        <div class="field" style="margin-top:12px"><label data-i18n="t_notes">Notes</label><textarea id="a-notes" data-i18n-ph="t_notes_ph" placeholder="Health status, characteristics, vaccination..."></textarea></div>
+        <div class="form-actions">
+          <button class="btn btn-primary" id="btn-save" onclick="saveGoat()" data-i18n="save">💾 Save Record</button>
+          <button class="btn btn-ghost" id="btn-cancel" onclick="resetForm()" style="display:none" data-i18n="cancel">Cancel Edit</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3 data-i18n="all_records">📋 Farm Records (M.K Dhadra)</h3>
+        <div style="overflow-x:auto">
+          <table class="goats">
+            <thead><tr><th data-i18n="t_tag">Tag</th><th data-i18n="t_name">Name</th><th data-i18n="t_breed">Breed</th><th data-i18n="t_gender">Gender</th><th data-i18n="t_age">Age</th><th data-i18n="t_weight">Weight</th><th data-i18n="t_price">Price (PKR)</th><th data-i18n="t_status">Status</th><th data-i18n="t_actions">Actions</th></tr></thead>
+            <tbody id="admin-rows"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3 data-i18n="seller_rec_title">🤝 Seller Listings (Approved)</h3>
+        <div style="overflow-x:auto">
+          <table class="goats">
+            <thead><tr><th data-i18n="t_tag">Tag</th><th data-i18n="t_name">Name</th><th data-i18n="t_sname">Seller</th><th data-i18n="t_breed">Breed</th><th data-i18n="t_age">Age</th><th data-i18n="t_price">Price (PKR)</th><th data-i18n="t_status">Status</th><th data-i18n="t_actions">Actions</th></tr></thead>
+            <tbody id="seller-rows"></tbody>
+          </table>
+        </div>
+        <div id="seller-rec-empty" style="color:var(--gray);font-size:13.5px;padding:8px 0;" data-i18n="seller_rec_empty">No seller listings yet.</div>
+        <div class="tools">
+          <button class="btn btn-ghost" onclick="exportData()" data-i18n="export_b">⬇ Export Backup (JSON)</button>
+          <label class="btn btn-ghost" style="margin:0">⬆ Import Backup<input type="file" id="import-file" accept=".json" style="display:none" onchange="importData(this)"></label>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="foot-grid">
+    <div>
+      <h4>M.K Dhadra Goat Farm <span class="urdu" style="font-size:13px;">ایم۔کے دھدرا گوٹ فارم</span></h4>
+      <div class="line">📧 obaidullah310220@gmail.com</div>
+    </div>
+    <div>
+      <h4 data-i18n="f_contact">Contact & Location</h4>
+      <div class="line">📞 <a href="tel:+923225026723">+92 322 502 6723</a> (WhatsApp)</div>
+      <div class="line">📍 <span data-i18n="f_addr">Chak # 31/11/L, Hussan Abdaal, Chichawatni</span></div>
+      <div class="line urdu" style="font-size:12.5px;">چک نمبر L/31/11، حسن ابدال، تحصیل چیچہ وطنی، ساہیوال</div>
+    </div>
+  </div>
+  <div class="foot-bottom">© 2026 M.K Dhadra Goat Farm <span class="urdu">ایم۔کے دھدرا گوٹ فارم</span> · <span id="foot-count"></span></div>
+</footer>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============ I18N ============ */
+const I18N = {
+  en: {
+    nav_public: '🌍 Public', nav_farmer: '➕ Sell Your Goat', nav_admin: '🔐 Admin',
+    badge: 'Livestock For Sale', hero_title: 'Find Your Perfect Goat',
+    hero_p: 'Raised free-range with natural feed and full veterinary care. Browse the animals currently available for sale — from our farm and trusted partner farmers.',
+    sec_avail: 'Available Animals', search_ph: 'Search by name or ID...',
+    all_breeds: 'All breeds', all_genders: 'All genders',
+    sort_new: 'Newest first', sort_pa: 'Price: low to high', sort_pd: 'Price: high to low', sort_aa: 'Youngest first',
+    male: 'Male', female: 'Female',
+    available: 'Available', sold_l: 'Sold', mo: 'mo',
+    call: '📞 Call', wa: '💬 WhatsApp',
+    empty1: 'No animals match your filters right now.', empty2: 'New stock is released regularly — check back soon.',
+    contact_sec: 'Contact & Visit Us', c_gm: 'General Manager', c_phone: 'Phone / WhatsApp', c_addr: 'Address',
+    farmer_badge: 'For Partner Farmers', farmer_hero: 'Sell Your Goat With Us',
+    farmer_hero_p: 'List your animal on our platform. Submissions are reviewed by the farm admin before going live on the public site.',
+    sub_title: '➕ Submit Your Goat for Sale',
+    f_farmer: 'Your Name (farmer)', f_phone: 'Your Phone / WhatsApp',
+    f_farmer_ph: 'e.g. Ahmed Khan', f_phone_ph: 'e.g. 0300-1234567',
+    t_tag: 'Tag / ID', t_name: 'Name', t_breed: 'Breed', t_gender: 'Gender', t_age: 'Age (months)', t_weight: 'Weight (kg)', t_price: 'Asking Price (PKR)', t_photo: 'Photo (required — auto-resized)', t_notes: 'Notes', t_status: 'Status', t_actions: 'Actions',
+    t_tag_ph: 'e.g. GR-001', t_name_ph: 'e.g. Bella', t_breed_ph: 'e.g. Boer', t_notes_ph: 'Health status, characteristics, vaccination...',
+    t_sphone: 'Seller Phone / WhatsApp', t_sphone_ph: 'e.g. 0300-1234567', t_address: 'Address / Village', t_address_ph: 'e.g. Chak 31/11-L, Chichawatni',
+    t_sname: 'Seller Name', t_sname_ph: 'e.g. Ahmed Khan', t_source: 'Listing Source', src_farm: 'M.K Dhadra Farm', src_seller: 'Seller (Farmer)',
+    t_cnic: 'CNIC Number (13 digits)', t_cnic_ph: 'e.g. 36102-1234567-1', t_cnic_photo: 'CNIC Card Photo (required)',
+    t_cnic_opt: 'CNIC Number (optional — 13 digits)', t_cnic_photo_opt: 'CNIC Card Photo (optional)',
+    cnic_note: 'Your CNIC is used only to verify the sale — it is never shown to buyers.',
+    pub_farm_sec: '🏡 M.K Dhadra Farm Stock', pub_seller_sec: '🤝 Seller Listings', seller_empty: 'No approved seller listings yet — farmers\' submissions appear here after review.',
+    male: 'Male', female: 'Female',
+    submit_btn: '📨 Submit for Review', clear: 'Clear Form',
+    submit_note: 'Submissions are reviewed by the farm admin before appearing on the public site. Buyers will contact you on the number provided.',
+    admin_title: '🔐 Admin Access', admin_note: 'Enter the admin PIN to manage goat records and farmer submissions.', unlock: 'Unlock Admin',
+    st_total: 'Total Records', st_avail: 'Available (Released)', st_pending: 'Farmer Submissions', st_sold: 'Sold', st_draft: 'Drafts (Hidden)',
+    pend_title: '✅ Farmer Submissions (Pending Review)', pend_empty: 'No pending submissions — all clear.',
+    approve: 'Approve & Publish', reject: 'Reject', release: 'Release', unrelease: 'Unrelease', sold_b: 'Sold', edit_b: 'Edit', del: 'Delete',
+    st_released: 'Released', st_draft_l: 'Draft', st_sold_l: 'Sold', st_pending_l: 'Pending',
+    form_title: '➕ Add New Goat Record', save: '💾 Save Record', cancel: 'Cancel Edit', all_records: '📋 Farm Records (M.K Dhadra)', seller_rec_title: '🤝 Seller Listings (Approved)', seller_rec_empty: 'No seller listings yet.',
+    export_b: '⬇ Export Backup (JSON)', import_b: '⬆ Import Backup',
+    toast_pin: 'Wrong PIN — try again', toast_req: 'Tag, Name and Breed are required', toast_farm_req: 'Farmer name and phone are required',
+    toast_photo: 'Photo is required', toast_price: 'Price is required (must be more than 0)', toast_phone: 'Seller phone is required', toast_addr: 'Address is required', toast_sname: 'Seller name is required',
+    toast_cnic: 'CNIC number is required', toast_cnic_fmt: 'CNIC must be 13 digits (e.g. 36102-1234567-1)', toast_cnic_photo: 'CNIC card photo is required',
+    toast_add: 'Record added — use Release to publish it', toast_upd: 'Record updated', toast_del: 'Record deleted',
+    toast_sub: 'Submitted! The farm admin will review your listing.', toast_rel: '→ released', toast_draft: '→ draft', toast_sold: '→ sold',
+    toast_exp: 'Backup exported', toast_imp: 'Backup imported', toast_imp_err: 'Import failed: invalid file',
+    f_contact: 'Contact & Location', f_addr: 'Chak # 31/11/L, Hussan Abdaal, Chichawatani'
+  },
+  ur: {
+    nav_public: '🌍 پبلک سائٹ', nav_farmer: '➕ اپنی بکری فروخت کریں', nav_admin: '🔐 ایڈمن',
+    badge: 'فروخت کے لیے مویشی', hero_title: 'اپنی پسند کی بکری تلاش کریں',
+    hero_p: 'قدرتی خوراک اور مکمل ویٹرنری نگہداشت کے ساتھ آزادانه پالے گئے۔ ابھی دستیاب جانور دیکھیں — ہمارے فارم اور بھروسہ مند پارٹنر کسانوں کی جانب سے۔',
+    sec_avail: 'دستیاب بکریاں', search_ph: 'نام یا ٹیگ سے تلاش کریں...',
+    all_breeds: 'تمام نسلیں', all_genders: 'تمام',
+    sort_new: 'نئی پہلے', sort_pa: 'قیمت: کم سے زیادہ', sort_pd: 'قیمت: زیادہ سے کم', sort_aa: 'کم عمر پہلے',
+    male: 'نر', female: 'مادہ',
+    available: 'دستیاب', sold_l: 'فروخت', mo: 'مہینہ',
+    call: '📞 کال', wa: '💬 واٹس ایپ',
+    empty1: 'اس وقت آپ کے فلٹر پر کوئی بکری پوری نہیں اتری۔', empty2: 'نیا اسٹاک باقاعدگی سے شائع ہوتا ہے — دوبارہ تشریف لائیں۔',
+    pub_farm_sec: '🏡 ایم۔کے دھدرا فارم کے جانور', pub_seller_sec: '🤝 کسانوں کی فروخت لسٹیں', seller_empty: 'ابھی کوئی منظور شدہ کسان لسٹیں نہیں — جائزے کے بعد یہاں آئیں گی۔',
+    contact_sec: 'رابطہ اور تشریف لائیں', c_gm: 'جنرل مینیجر', c_phone: 'فون / واٹس ایپ', c_addr: 'پتہ',
+    farmer_badge: 'کسان ساتھیوں کے لیے', farmer_hero: 'اپنی بکری ہمارے ساتھ فروخت کریں',
+    farmer_hero_p: 'اپنا جانور ہمارے پلیٹ فارم پر لسٹ کریں۔ فارم ایڈمن کی منظوری کے بعد عوامی سائٹ پر شائع ہوگا۔',
+    sub_title: '➕ فروخت کے لیے بکری جمع کروائیں',
+    f_farmer: 'کسان کا نام', f_phone: 'فون / واٹس ایپ نمبر',
+    f_farmer_ph: 'مثلاً احمد خان', f_phone_ph: 'مثلاً 0300-1234567',
+    t_tag: 'ٹیگ / آئی ڈی', t_name: 'نام', t_breed: 'نسل', t_gender: 'جنس', t_age: 'عمر (مہینے)', t_weight: 'وزن (کلو)', t_price: 'مانگی قیمت (روپے)', t_photo: 'تصویر (لازمی — خودکار سائز)', t_notes: 'نوٹس', t_status: 'حالت', t_actions: 'ایکشن',
+    t_tag_ph: 'مثلاً GR-001', t_name_ph: 'مثلاً شہزادی', t_breed_ph: 'مثلاً بیٹل', t_notes_ph: 'صحت، خصوصیات، ویکسینیشن...',
+    t_sphone: 'بیچنے والے کا فون / واٹس ایپ', t_sphone_ph: 'مثلًا 0300-1234567', t_address: 'پتہ / گاؤں', t_address_ph: 'مثلًا چک 31/11-L, چیچہ وطنی',
+    t_sname: 'بیچنے والے کا نام', t_sname_ph: 'مثلًا احمد خان', t_source: 'کس کی لسٹ ہے', src_farm: 'ایم۔کے دھدرا فارم', src_seller: 'بیچنے والا (کسان)',
+    t_cnic: 'شناختی کارڈ نمبر (13 ہندسے)', t_cnic_ph: 'مثلًا 36102-1234567-1', t_cnic_photo: 'شناختی کارڈ کی تصویر (لازمی)',
+    cnic_note: 'آپ کا شناختی کارڈ صرف فروخت کی تصدیق لیے استعمال ہوتا ہے — خریدار کو نہیں دکھایا جاتا۔',
+    t_cnic_opt: 'شناختی کارڈ نمبر (اختیاری — 13 ہندسے)', t_cnic_photo_opt: 'شناختی کارڈ کی تصویر (اختیاری)',
+    male: 'نر', female: 'مادہ',
+    submit_btn: '📨 جائزے کے لیے جمع کروائیں', clear: 'فارم صاف کریں',
+    submit_note: 'سبمشنز کی انتظامی منظوری کے بعد عوامی سائٹ پر شائع ہوں گے۔ خریدار آپ کے نمبر پر رابطہ کریں گے۔',
+    admin_title: '🔐 ایڈمن رسائی', admin_note: 'بکری ریکارڈز اور کسان سبمشنز کے انتظام کے لیے ایڈمن PIN داخل کریں۔', unlock: 'ایڈمن کھولیں',
+    st_total: 'کل ریکارڈز', st_avail: 'دستیاب (شائع شدہ)', st_pending: 'کسان سبمشنز', st_sold: 'فروخت شدہ', st_draft: 'مسودے (چھپے ہوئے)',
+    pend_title: '✅ کسان سبمشنز (زیرِ التوا)', pend_empty: 'کوئی زیرِ التوا سبمشن نہیں — سب کلیئر ہے۔',
+    approve: 'منظور و شائع کریں', reject: 'مسترد کریں', release: 'شائع کریں', unrelease: 'چھپائیں', sold_b: 'فروخت', edit_b: 'ترمیم', del: 'حذف کریں',
+    st_released: 'شائع شدہ', st_draft_l: 'مسودہ', st_sold_l: 'فروخت', st_pending_l: 'زیرِ التوا',
+    form_title: '➕ نئی بکری کا ریکارڈ', save: '💾 ریکارڈ محفوظ کریں', cancel: 'ترمیم منسوخ کریں', all_records: '📋 فارم ریکارڈز (ایم۔کے دھدرا)', seller_rec_title: '🤝 کسانوں کی لسٹیں (منظور شدہ)', seller_rec_empty: 'ابھی کوئی کسان لسٹیں نہیں۔',
+    export_b: '⬇ بیک اپ ڈاؤن لوڈ (JSON)', import_b: '⬆ بیک اپ امپورٹ',
+    toast_pin: 'غلط PIN — دوبارہ کوشش کریں', toast_req: 'ٹیگ، نام اور نسل لازم ہیں', toast_farm_req: 'کسان کا نام اور فون لازم ہیں',
+    toast_photo: 'تصویر لازمی ہے', toast_price: 'قیمت لازمی ہے (صفر سے زیادہ)', toast_phone: 'بیچنے والے کا فون لازمی ہے', toast_addr: 'پتہ لازمی ہے', toast_sname: 'بیچنے والے کا نام لازمی ہے',
+    toast_cnic: 'شناختی کارڈ نمبر لازمی ہے', toast_cnic_fmt: 'شناختی کارڈ 13 ہندسوں کا ہونا چاہیے (مثلًا 36102-1234567-1)', toast_cnic_photo: 'شناختی کارڈ کی تصویر لازمی ہے',
+    toast_add: 'ریکارڈ شامل ہو گیا — شائع کرنے کے لیے Release استعمال کریں', toast_upd: 'ریکارڈ اپ ڈیٹ ہو گیا', toast_del: 'ریکارڈ حذف ہو گیا',
+    toast_sub: 'سبمشن موصول — فارم ایڈمن جائزہ لے گا', toast_rel: '→ شائع', toast_draft: '→ مسودہ', toast_sold: '→ فروخت',
+    toast_exp: 'بیک اپ ڈاؤن لوڈ ہو گیا', toast_imp: 'بیک اپ امپورٹ ہو گیا',
+    f_contact: 'رابطہ اور مقام', f_addr: 'چک نمبر L/31/11، حسن ابدال، تحصیل چیچہ وطنی، ساہیوال'
+  }
+};
+let lang = localStorage.getItem('dhadra_lang') || 'en';
+function t(k) { return (I18N[lang] && I18N[lang][k] !== undefined) ? I18N[lang][k] : (I18N.en[k] !== undefined ? I18N.en[k] : k); }
+
+const ADMIN_PIN = '1234';
+const LS_KEY = 'goatfarm_records';            // M.K Dhadra farm stock
+const LS_FARMER_KEY = 'goatfarm_seller_records'; // seller (farmer) listings
+const FARM_NAME = 'M.K Dhadra Goat Farm';
+const FARM_PHONE = '+923225026723';
+let editingId = null;
+let currentPhoto = null;      // animal photo
+let currentCnicPhoto = null;  // seller CNIC card photo
+let adminUnlocked = false;
+
+/* ============ STORAGE (segregated) ============ */
+function getFarmRecords() { try { return JSON.parse(localStorage.getItem(LS_KEY)) || []; } catch(e) { return []; } }
+function saveFarmRecords(list) { localStorage.setItem(LS_KEY, JSON.stringify(list)); }
+function getSellerRecords() { try { return JSON.parse(localStorage.getItem(LS_FARMER_KEY)) || []; } catch(e) { return []; } }
+function saveSellerRecords(list) { localStorage.setItem(LS_FARMER_KEY, JSON.stringify(list)); }
+function allRecords() { return getFarmRecords().concat(getSellerRecords()); }
+function findRecord(id) {
+  const f = getFarmRecords(); const i = f.findIndex(r => r.id === id);
+  if (i >= 0) return { rec: f[i], store: 'farm', list: f };
+  const s = getSellerRecords(); const j = s.findIndex(r => r.id === id);
+  if (j >= 0) return { rec: s[j], store: 'seller', list: s };
+  return null;
+}
+function saveStore(store, list) { if (store === 'seller') saveSellerRecords(list); else saveFarmRecords(list); }
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+
+/* ============ SAMPLE DATA ============ */
+function loadSample() {
+  if (allRecords().length && !confirm(lang === 'ur' ? 'ریکارڈز پہلے سے موجود ہیں۔ بہرحال نمونہ بکریاں شامل کریں؟' : 'Records already exist. Add sample goats anyway?')) return;
+  const farmSamples = [
+    { id: uid(), tag: 'GR-001', name: 'Bella',   breed: 'Boer',         gender: 'Female', age: 18, weight: 52, price: 145000, status: 'released', notes: 'Excellent milking line, very calm temperament.', photo: null, created: Date.now(), source: 'farm', address: 'Chak # 31/11/L, Hussan Abdaal, Chichawatni', farmerName: 'M.K Dhadra Goat Farm', farmerPhone: FARM_PHONE, cnic: '36102-1234567-1', cnicPhoto: null, contactPhone: FARM_PHONE },
+    { id: uid(), tag: 'GR-002', name: 'Sultan',  breed: 'Damascus',     gender: 'Male',   age: 24, weight: 68, price: 185000, status: 'released', notes: 'Strong stud male, prize-winning bloodline.',   photo: null, created: Date.now() + 1, source: 'farm', address: 'Chak # 31/11/L, Hussan Abdaal, Chichawatni', farmerName: 'M.K Dhadra Goat Farm', farmerPhone: FARM_PHONE, cnic: '36102-1234567-1', cnicPhoto: null, contactPhone: FARM_PHONE },
+    { id: uid(), tag: 'GR-003', name: 'Layla',   breed: 'Anglo-Nubian', gender: 'Female', age: 10, weight: 31, price: 95000,  status: 'released', notes: 'Friendly, great with children.',               photo: null, created: Date.now() + 2, source: 'farm', address: 'Chak # 31/11/L, Hussan Abdaal, Chichawatni', farmerName: 'M.K Dhadra Goat Farm', farmerPhone: FARM_PHONE, cnic: '36102-1234567-1', cnicPhoto: null, contactPhone: FARM_PHONE }
+  ];
+  const sellerSamples = [
+    { id: uid(), tag: 'AK-012', name: 'Shahzadi',breed: 'Beetal',       gender: 'Female', age: 18, weight: 46, price: 110000, status: 'pending',  notes: 'Healthy, 2nd pregnancy.',                      photo: null, created: Date.now() + 3, source: 'seller', address: 'Chak 31/11-L, Chichawatni', farmerName: 'Ahmed Khan', farmerPhone: '0300-1234567', cnic: '36102-7654321-9', cnicPhoto: null, contactPhone: '0300-1234567' }
+  ];
+  saveFarmRecords(getFarmRecords().concat(farmSamples));
+  saveSellerRecords(getSellerRecords().concat(sellerSamples));
+  renderAll(); toast(t('toast_add'));
+}
+
+/* ============ TABS ============ */
+function switchTab(tab) {
+  document.getElementById('public-view').classList.toggle('active', tab === 'public');
+  document.getElementById('farmer-view').classList.toggle('active', tab === 'farmer');
+  document.getElementById('admin-view').classList.toggle('active', tab === 'admin');
+  document.getElementById('tab-public').classList.toggle('active', tab === 'public');
+  document.getElementById('tab-farmer').classList.toggle('active', tab === 'farmer');
+  document.getElementById('tab-admin').classList.toggle('active', tab === 'admin');
+  if (tab === 'admin' && !adminUnlocked) { document.getElementById('pin-gate').style.display = 'block'; document.getElementById('admin-content').style.display = 'none'; }
+  renderAll();
+}
+
+/* ============ PIN ============ */
+function tryPin() {
+  if (document.getElementById('pin-input').value === ADMIN_PIN) {
+    adminUnlocked = true;
+    document.getElementById('pin-gate').style.display = 'none';
+    document.getElementById('admin-content').style.display = 'block';
+    renderAll();
+  } else { toast(t('toast_pin')); }
+}
+
+/* ============ WHATSAPP ============ */
+function waDigits(phone) {
+  let d = String(phone || FARM_PHONE).replace(/\D/g, '');
+  if (d.startsWith('0')) d = '92' + d.slice(1);
+  if (!d.startsWith('92') && d.length <= 10) d = '92' + d;
+  return d;
+}
+function waLink(g) {
+  const msg = 'السلام علیکم! Hello, I am interested in the goat "' + g.name + '" (' + g.tag + ') listed at Rs ' + Number(g.price || 0).toLocaleString() + ' on ' + FARM_NAME + '.';
+  return 'https://wa.me/' + waDigits(g.contactPhone) + '?text=' + encodeURIComponent(msg);
+}
+
+/* ============ PUBLIC RENDER (segregated) ============ */
+function prepList(raw, q, breed, gender, sort) {
+  let list = raw.filter(r => r.status === 'released');
+  if (q) list = list.filter(r => (r.name + ' ' + r.tag).toLowerCase().includes(q));
+  if (breed) list = list.filter(r => r.breed === breed);
+  if (gender) list = list.filter(r => r.gender === gender);
+  if (sort === 'price-asc') list.sort((a, b) => (a.price || 0) - (b.price || 0));
+  else if (sort === 'price-desc') list.sort((a, b) => (b.price || 0) - (a.price || 0));
+  else if (sort === 'age-asc') list.sort((a, b) => (a.age || 0) - (b.age || 0));
+  else list.sort((a, b) => (b.created || 0) - (a.created || 0));
+  return list;
+}
+function goatCard(g) {
+  const card = document.createElement('div');
+  card.className = 'goat-card';
+  const photo = g.photo ? '<img src="' + g.photo + '" alt="' + esc(g.name) + '">' : '🐐';
+  const seller = (g.source === 'seller' && g.farmerName) ? (t('seller_by') + ' ' + esc(g.farmerName)) : t('seller_farm');
+  card.innerHTML =
+    '<div class="goat-photo">' + photo + '<span class="status-badge badge-available">' + t('available') + '</span><span class="seller-tag">' + seller + '</span></div>' +
+    '<div class="goat-body">' +
+      '<h3>' + esc(g.name) + ' <span style="font-weight:400;color:var(--gray)">(' + esc(g.tag) + ')</span>' +
+        '<a class="wa-inline" target="_blank" href="' + waLink(g) + '" title="WhatsApp">💬</a></h3>' +
+      '<div class="breed">' + esc(g.breed) + '</div>' +
+      '<div class="goat-meta"><span>🎂 ' + esc(g.age) + ' ' + t('mo') + '</span><span>⚖ ' + esc(g.weight) + ' ' + t('kg') + '</span><span>' + (g.gender === 'Male' ? '♂ ' + t('male') : '♀ ' + t('female')) + '</span></div>' +
+      (g.notes ? '<div style="font-size:12.5px;color:var(--gray)">' + esc(g.notes) + '</div>' : '') +
+      '<div class="goat-price">Rs ' + Number(g.price || 0).toLocaleString() + '</div>' +
+      '<div class="cta-row">' +
+        '<a class="contact-cta" href="tel:' + esc(g.contactPhone || FARM_PHONE) + '">' + t('call') + '</a>' +
+        '<a class="wa-btn" target="_blank" href="' + waLink(g) + '">' + t('wa') + '</a>' +
+      '</div>' +
+    '</div>';
+  return card;
+}
+function renderCardGrid(list, gridId, emptyId) {
+  const grid = document.getElementById(gridId);
+  const empty = document.getElementById(emptyId);
+  grid.innerHTML = '';
+  empty.style.display = list.length ? 'none' : 'block';
+  list.forEach(g => grid.appendChild(goatCard(g)));
+}
+function renderPublic() {
+  const q = document.getElementById('pub-search').value.toLowerCase();
+  const breed = document.getElementById('pub-breed').value;
+  const gender = document.getElementById('pub-gender').value;
+  const sort = document.getElementById('pub-sort').value;
+  renderCardGrid(prepList(getFarmRecords(), q, breed, gender, sort), 'public-grid', 'public-empty');
+  renderCardGrid(prepList(getSellerRecords(), q, breed, gender, sort), 'seller-grid', 'seller-empty');
+}
+
+/* ============ ADMIN RENDER (segregated) ============ */
+function renderAdmin() {
+  const farm = getFarmRecords();
+  const sellers = getSellerRecords();
+  const all = farm.concat(sellers);
+  const avail = all.filter(r => r.status === 'released').length;
+  const pend = all.filter(r => r.status === 'pending').length;
+  const sold = all.filter(r => r.status === 'sold').length;
+  const draft = all.filter(r => r.status === 'draft').length;
+  document.getElementById('st-total').textContent = all.length;
+  document.getElementById('st-avail').textContent = avail;
+  document.getElementById('st-pending').textContent = pend;
+  document.getElementById('st-sold').textContent = sold;
+  document.getElementById('st-draft').textContent = draft;
+
+  // pending farmer submissions (seller store)
+  const pendRows = document.getElementById('pending-rows');
+  pendRows.innerHTML = '';
+  const pendList = sellers.filter(r => r.status === 'pending').sort((a, b) => (b.created || 0) - (a.created || 0));
+  document.getElementById('pending-empty').style.display = pendList.length ? 'none' : 'block';
+  pendList.forEach(g => {
+    const tr = document.createElement('tr');
+    tr.innerHTML =
+      '<td>' + esc(g.farmerName || '-') + '</td><td class="seller-cell">' + esc(g.farmerPhone || '-') + '</td>' +
+      '<td class="seller-cell">' + esc(g.cnic || '-') + '</td>' +
+      '<td>' + esc(g.tag) + '</td><td><b>' + esc(g.name) + '</b></td><td>' + esc(g.breed) + '</td>' +
+      '<td>' + esc(g.age) + ' ' + t('mo') + '</td><td>' + Number(g.price || 0).toLocaleString() + '</td>' +
+      '<td><div class="actions-cell">' +
+        '<button class="btn-sm btn-approve" onclick="setStatus(\'' + g.id + '\',\'released\')">' + t('approve') + '</button>' +
+        '<button class="btn-sm btn-del" onclick="deleteGoat(\'' + g.id + '\')">' + t('reject') + '</button>' +
+      '</div></td>';
+    pendRows.appendChild(tr);
+  });
+
+  // farm records (farm store)
+  const rows = document.getElementById('admin-rows');
+  rows.innerHTML = '';
+  const order = { pending: 0, released: 1, draft: 2, sold: 3 };
+  farm.slice().sort((a, b) => (order[a.status] - order[b.status]) || (b.created - a.created)).forEach(g => {
+    const tr = document.createElement('tr');
+    const pill = '<span class="st-pill st-' + g.status + '">' + t('st_' + g.status) + '</span>';
+    let acts = '';
+    if (g.status !== 'released') acts += '<button class="btn-sm btn-release" onclick="setStatus(\'' + g.id + '\',\'released\')">' + t('release') + '</button>';
+    if (g.status !== 'draft') acts += '<button class="btn-sm btn-unrelease" onclick="setStatus(\'' + g.id + '\',\'draft\')">' + t('unrelease') + '</button>';
+    if (g.status !== 'sold') acts += '<button class="btn-sm btn-sold" onclick="setStatus(\'' + g.id + '\',\'sold\')">' + t('sold_b') + '</button>';
+    acts += '<button class="btn-sm btn-edit" onclick="editGoat(\'' + g.id + '\')">' + t('edit_b') + '</button>';
+    acts += '<button class="btn-sm btn-del" onclick="deleteGoat(\'' + g.id + '\')">' + t('del') + '</button>';
+    tr.innerHTML =
+      '<td>' + esc(g.tag) + '</td><td><b>' + esc(g.name) + '</b><div class="seller-cell">' + esc(g.farmerName || t('seller_farm')) + '</div></td><td>' + esc(g.breed) + '</td><td>' + esc(g.gender) + '</td>' +
+      '<td>' + esc(g.age) + ' ' + t('mo') + '</td><td>' + esc(g.weight) + '</td><td>' + Number(g.price || 0).toLocaleString() + '</td>' +
+      '<td>' + pill + '</td><td><div class="actions-cell">' + acts + '</div></td>';
+    rows.appendChild(tr);
+  });
+
+  // seller listings (seller store, excluding pending — those are above)
+  const srows = document.getElementById('seller-rows');
+  srows.innerHTML = '';
+  const sellerList = sellers.filter(r => r.status !== 'pending').sort((a, b) => (order[a.status] - order[b.status]) || (b.created - a.created));
+  document.getElementById('seller-rec-empty').style.display = sellerList.length ? 'none' : 'block';
+  sellerList.forEach(g => {
+    const tr = document.createElement('tr');
+    const pill = '<span class="st-pill st-' + g.status + '">' + t('st_' + g.status) + '</span>';
+    let acts = '';
+    if (g.status !== 'released') acts += '<button class="btn-sm btn-release" onclick="setStatus(\'' + g.id + '\',\'released\')">' + t('release') + '</button>';
+    if (g.status !== 'draft') acts += '<button class="btn-sm btn-unrelease" onclick="setStatus(\'' + g.id + '\',\'draft\')">' + t('unrelease') + '</button>';
+    if (g.status !== 'sold') acts += '<button class="btn-sm btn-sold" onclick="setStatus(\'' + g.id + '\',\'sold\')">' + t('sold_b') + '</button>';
+    acts += '<button class="btn-sm btn-edit" onclick="editGoat(\'' + g.id + '\')">' + t('edit_b') + '</button>';
+    acts += '<button class="btn-sm btn-del" onclick="deleteGoat(\'' + g.id + '\')">' + t('del') + '</button>';
+    tr.innerHTML =
+      '<td>' + esc(g.tag) + '</td><td><b>' + esc(g.name) + '</b></td>' +
+      '<td><div>' + esc(g.farmerName || '-') + '</div><div class="seller-cell">' + esc(g.farmerPhone || '') + '</div><div class="seller-cell">' + esc(g.cnic || '') + '</div></td>' +
+      '<td>' + esc(g.breed) + '</td><td>' + esc(g.age) + ' ' + t('mo') + '</td><td>' + Number(g.price || 0).toLocaleString() + '</td>' +
+      '<td>' + pill + '</td><td><div class="actions-cell">' + acts + '</div></td>';
+    srows.appendChild(tr);
+  });
+}
+
+/* ============ FORM ============ */
+function resetForm() {
+  editingId = null;
+  ['f-tag','f-name','f-breed','f-age','f-weight','f-price','f-notes','fm-name','fm-phone','fm-address','fm-cnic','a-tag','a-name','a-breed','a-age','a-weight','a-price','a-notes','a-farmphone','a-farmername','a-cnic','a-address'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+  document.getElementById('f-gender').value = 'Male';
+  document.getElementById('a-gender').value = 'Male';
+  document.getElementById('a-status').value = 'released';
+  document.getElementById('a-source').value = 'farm';
+  ['f-photo','a-photo','fm-cnic-photo','a-cnic-photo'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+  ['photo-preview','a-photo-preview','fmcnic-preview','a-cnic-preview'].forEach(id => { const el = document.getElementById(id); if (el) el.style.display = 'none'; });
+  currentPhoto = null;
+  currentCnicPhoto = null;
+  document.getElementById('form-title').textContent = t('form_title');
+  document.getElementById('btn-cancel').style.display = 'none';
+}
+function editGoat(id) {
+  const f = findRecord(id);
+  if (!f) return;
+  const g = f.rec;
+  editingId = id;
+  document.getElementById('a-source').value = f.store;
+  document.getElementById('a-tag').value = g.tag;
+  document.getElementById('a-name').value = g.name;
+  document.getElementById('a-breed').value = g.breed;
+  document.getElementById('a-gender').value = g.gender;
+  document.getElementById('a-age').value = g.age;
+  document.getElementById('a-weight').value = g.weight;
+  document.getElementById('a-price').value = g.price;
+  document.getElementById('a-status').value = g.status;
+  document.getElementById('a-farmername').value = g.farmerName || '';
+  document.getElementById('a-farmphone').value = g.farmerPhone || '';
+  document.getElementById('a-cnic').value = g.cnic || '';
+  document.getElementById('a-address').value = g.address || '';
+  document.getElementById('a-notes').value = g.notes || '';
+  currentPhoto = g.photo || null;
+  if (currentPhoto) { const pv = document.getElementById('a-photo-preview'); pv.src = currentPhoto; pv.style.display = 'block'; }
+  currentCnicPhoto = g.cnicPhoto || null;
+  if (currentCnicPhoto) { const pv = document.getElementById('a-cnic-preview'); pv.src = currentCnicPhoto; pv.style.display = 'block'; }
+  document.getElementById('form-title').textContent = '✏ ' + t('edit_b') + ': ' + g.name;
+  document.getElementById('btn-cancel').style.display = 'inline-block';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function validCnic(v) { return /^\d{13}$/.test(String(v || '').replace(/\D/g, '')); }
+function saveGoat() {
+  const tag = document.getElementById('a-tag').value.trim();
+  const name = document.getElementById('a-name').value.trim();
+  const breed = document.getElementById('a-breed').value.trim();
+  const price = +document.getElementById('a-price').value || 0;
+  const source = document.getElementById('a-source').value;
+  const sellerName = document.getElementById('a-farmername').value.trim();
+  const sellerPhone = document.getElementById('a-farmphone').value.trim();
+  const cnic = document.getElementById('a-cnic').value.trim();
+  const address = document.getElementById('a-address').value.trim();
+  if (!tag || !name || !breed) { toast(t('toast_req')); return; }
+  if (!price) { toast(t('toast_price')); return; }
+  if (!currentPhoto) { toast(t('toast_photo')); return; }
+  if (!sellerName) { toast(t('toast_sname')); return; }
+  if (!sellerPhone) { toast(t('toast_phone')); return; }
+  if (cnic && !validCnic(cnic)) { toast(t('toast_cnic_fmt')); return; }
+  if (!address) { toast(t('toast_addr')); return; }
+  const prev = editingId ? findRecord(editingId) : null;
+  const src = prev ? (prev.rec.source || prev.store) : source;
+  const rec = {
+    id: prev ? prev.rec.id : uid(), tag: tag, name: name, breed: breed,
+    gender: document.getElementById('a-gender').value,
+    age: +document.getElementById('a-age').value || 0,
+    weight: +document.getElementById('a-weight').value || 0,
+    price: price,
+    status: document.getElementById('a-status').value,
+    notes: document.getElementById('a-notes').value.trim(),
+    address: address, source: src,
+    photo: currentPhoto, cnic: cnic, cnicPhoto: currentCnicPhoto,
+    created: prev ? prev.rec.created || Date.now() : Date.now(),
+    farmerName: sellerName, farmerPhone: sellerPhone,
+    contactPhone: src === 'seller' ? sellerPhone : FARM_PHONE
+  };
+  if (prev) {
+    const idx = prev.list.findIndex(r => r.id === rec.id);
+    prev.list[idx] = rec;
+    saveStore(prev.store, prev.list);
+  } else if (source === 'seller') {
+    saveSellerRecords(getSellerRecords().concat([rec]));
+  } else {
+    saveFarmRecords(getFarmRecords().concat([rec]));
+  }
+  resetForm(); renderAll();
+  toast(prev ? t('toast_upd') : t('toast_add'));
+}
+function submitFarmerGoat() {
+  const farmerName = document.getElementById('fm-name').value.trim();
+  const farmerPhone = document.getElementById('fm-phone').value.trim();
+  const address = document.getElementById('fm-address').value.trim();
+  const cnic = document.getElementById('fm-cnic').value.trim();
+  const tag = document.getElementById('f-tag').value.trim();
+  const name = document.getElementById('f-name').value.trim();
+  const breed = document.getElementById('f-breed').value.trim();
+  const price = +document.getElementById('f-price').value || 0;
+  if (!farmerName || !farmerPhone) { toast(t('toast_farm_req')); return; }
+  if (!address) { toast(t('toast_addr')); return; }
+  if (!cnic) { toast(t('toast_cnic')); return; }
+  if (!validCnic(cnic)) { toast(t('toast_cnic_fmt')); return; }
+  if (!tag || !name || !breed) { toast(t('toast_req')); return; }
+  if (!price) { toast(t('toast_price')); return; }
+  if (!currentPhoto) { toast(t('toast_photo')); return; }
+  if (!currentCnicPhoto) { toast(t('toast_cnic_photo')); return; }
+  const rec = {
+    id: uid(), tag: tag, name: name, breed: breed,
+    gender: document.getElementById('f-gender').value,
+    age: +document.getElementById('f-age').value || 0,
+    weight: +document.getElementById('f-weight').value || 0,
+    price: price,
+    status: 'pending',
+    notes: document.getElementById('f-notes').value.trim(),
+    address: address, source: 'seller',
+    photo: currentPhoto, cnic: cnic, cnicPhoto: currentCnicPhoto, created: Date.now(),
+    farmerName: farmerName, farmerPhone: farmerPhone, contactPhone: farmerPhone
+  };
+  saveSellerRecords(getSellerRecords().concat([rec]));
+  resetForm(); renderAll();
+  toast(t('toast_sub'));
+}
+function setStatus(id, status) {
+  const f = findRecord(id);
+  if (f) { f.rec.status = status; saveStore(f.store, f.list); renderAll(); toast(f.rec.name + ' → ' + t('st_' + status)); }
+}
+function deleteGoat(id) {
+  const f = findRecord(id);
+  if (!f) return;
+  if (!confirm(t('toast_del_confirm') + ' "' + f.rec.name + '"?')) return;
+  saveStore(f.store, f.list.filter(r => r.id !== id));
+  if (editingId === id) resetForm();
+  renderAll(); toast(t('toast_del'));
+}
+function handlePhoto(input, previewId, kind) {
+  const pvId = previewId || 'photo-preview';
+  const isCnic = kind === 'cnic';
+  const file = input.files && input.files[0];
+  if (!file) {
+    if (isCnic) currentCnicPhoto = null; else currentPhoto = null;
+    document.getElementById(pvId).style.display = 'none'; return;
+  }
+  const reader = new FileReader();
+  reader.onload = e => {
+    const img = new Image();
+    img.onload = () => {
+      const max = 600, scale = Math.min(1, max / img.width);
+      const c = document.createElement('canvas');
+      c.width = Math.round(img.width * scale); c.height = Math.round(img.height * scale);
+      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+      const data = c.toDataURL('image/jpeg', 0.8);
+      if (isCnic) currentCnicPhoto = data; else currentPhoto = data;
+      const pv = document.getElementById(pvId); pv.src = data; pv.style.display = 'block';
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+/* ============ BACKUP ============ */
+function exportData() {
+  const blob = new Blob([JSON.stringify({ farm: getFarmRecords(), sellers: getSellerRecords() }, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'goat-records-backup-' + new Date().toISOString().slice(0, 10) + '.json';
+  document.body.appendChild(a); a.click(); a.remove();
+  toast(t('toast_exp'));
+}
+function importData(input) {
+  const file = input.files && input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const data = JSON.parse(e.target.result);
+      let farm = [], sellers = [];
+      if (Array.isArray(data)) {           // legacy single-list backup
+        farm = data.filter(r => r && r.source !== 'seller' && !r.farmerName);
+        sellers = data.filter(r => r && (r.source === 'seller' || r.farmerName));
+      } else if (data && Array.isArray(data.farm)) {  // new segregated backup
+        farm = data.farm; sellers = data.sellers || [];
+      } else throw 'bad format';
+      saveFarmRecords(farm); saveSellerRecords(sellers); renderAll();
+      toast(t('toast_imp') + ' — ' + (farm.length + sellers.length));
+    } catch (err) { toast(t('toast_imp_err')); }
+  };
+  reader.readAsText(file);
+}
+
+/* ============ HELPERS ============ */
+function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+function toast(m) { const t = document.getElementById('toast'); t.textContent = m; t.classList.add('show'); clearTimeout(t._t); t._t = setTimeout(() => t.classList.remove('show'), 2600); }
+function renderAll() {
+  const breeds = [...new Set(allRecords().map(r => r.breed).filter(Boolean))];
+  const sel = document.getElementById('pub-breed');
+  const cur = sel.value;
+  sel.innerHTML = '<option value="">' + t('all_breeds') + '</option>' + breeds.map(b => '<option' + (b === cur ? ' selected' : '') + '>' + esc(b) + '</option>').join('');
+  renderPublic();
+  if (adminUnlocked) renderAdmin();
+  document.getElementById('foot-count').textContent = allRecords().filter(r => r.status === 'released').length + ' ' + t('foot_avail');
+}
+
+/* ============ LANGUAGE ============ */
+function toggleLang() { setLang(lang === 'ur' ? 'en' : 'ur'); }
+function applyLang() {
+  document.documentElement.lang = lang === 'ur' ? 'ur' : 'en';
+  document.documentElement.dir = lang === 'ur' ? 'rtl' : 'ltr';
+  document.getElementById('lang-btn').textContent = lang === 'ur' ? 'English' : 'اردو';
+  document.querySelectorAll('[data-i18n]').forEach(el => { el.innerHTML = t(el.getAttribute('data-i18n')); });
+  document.querySelectorAll('[data-i18n-ph]').forEach(el => { el.placeholder = t(el.getAttribute('data-i18n-ph')); });
+  renderAll();
+}
+function setLang(l) { lang = l; localStorage.setItem('dhadra_lang', l); applyLang(); }
+
+/* ============ INIT ============ */
+if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
+  navigator.serviceWorker.register('sw.js').catch(() => {});
+}
+(function migrateStores() {
+  if (localStorage.getItem(LS_FARMER_KEY) === null) {   // one-time: split old mixed list
+    const farm = getFarmRecords();
+    const move = farm.filter(r => r.farmerName);
+    if (move.length) {
+      saveSellerRecords(move.map(r => { r.source = 'seller'; return r; }));
+      saveFarmRecords(farm.filter(r => !r.farmerName));
+    }
+  }
+  const farm = getFarmRecords(); let ch = false;
+  farm.forEach(r => { if (!r.source) { r.source = 'farm'; ch = true; } });
+  if (ch) saveFarmRecords(farm);
+  const sellers = getSellerRecords(); ch = false;
+  sellers.forEach(r => { if (!r.source) { r.source = 'seller'; ch = true; } });
+  if (ch) saveSellerRecords(sellers);
+})();
+applyLang();
+if (!localStorage.getItem(LS_KEY) && !localStorage.getItem(LS_FARMER_KEY)) loadSample();
+renderAll();
+</script>
+</body>
+</html>
