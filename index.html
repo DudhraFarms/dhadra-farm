@@ -70,6 +70,9 @@
   .filters input { flex: 1; min-width: 180px; }
 
   .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(235px, 1fr)); gap: 12px; }
+  .goat-extras { font-size: 11.5px; color: var(--green); font-weight: 600; line-height: 1.5; }
+  .attr-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; margin-top: 10px; }
+  .attr-grid select { font-size: 13px; padding: 8px 10px; }
   .badge-sold { background: #8d6e63; }
   .goat-photo.sold { background: linear-gradient(135deg, #e6e0d2, #efe9dc); }
   .goat-photo.sold img { filter: grayscale(.75); opacity: .88; }
@@ -265,6 +268,7 @@
         <div class="field"><label data-i18n="t_weight">Weight (kg)</label><input id="f-weight" type="number" min="0" step="0.1" placeholder="45.5"></div>
         <div class="field"><label data-i18n="t_price">Asking Price (PKR)</label><input id="f-price" type="number" min="0" placeholder="110000"></div>
       </div>
+      <div class="attr-grid" id="f-attrs"></div>
       <div class="pic-grid">
         <div class="pic-slot">
           <div class="pic-main">
@@ -355,6 +359,7 @@
           <div class="field"><label data-i18n="t_cnic_opt">CNIC Number (optional — 13 digits)</label><input id="a-cnic" data-i18n-ph="t_cnic_ph" placeholder="e.g. 36102-1234567-1" maxlength="15"></div>
           <div class="field"><label data-i18n="t_address">Address / Village</label><input id="a-address" data-i18n-ph="t_address_ph" placeholder="e.g. Chak 31/11-L, Chichawatni"></div>
         </div>
+        <div class="attr-grid" id="a-attrs"></div>
         <div class="pic-grid">
           <div class="pic-slot">
             <div class="pic-main">
@@ -625,6 +630,33 @@ const BREEDS = [
   ['Boer', 'بوئر'], ['Damascus', 'دمشقی'], ['Anglo-Nubian', 'اینگلو نوبیئن'],
   ['Saanen', 'سانیں'], ['Alpine', 'ایلپائن'], ['Sirohi', 'سیروہی']
 ];
+// Extra animal attributes (stored as readable labels on each record)
+const EXTRA_ATTRS = [
+  { k: 'pregnant', label: 'Pregnant? / حاملہ؟', opts: [['Pregnant (حاملہ)'], ['Not Pregnant (حاملہ نہیں)']] },
+  { k: 'teeth', label: 'Teeth / دانت', opts: [['Baby (دودھ کے)'], ['2 Teeth (۲ دانت)'], ['4 Teeth (۴ دانت)'], ['6 Teeth (۶ دانت)'], ['Full (مکمل ۸)']] },
+  { k: 'milking', label: 'Milk / دودھ', opts: [['Milking (دودھ والی)'], ['Dry (خشک)']] },
+  { k: 'horns', label: 'Horns / سینگ', opts: [['Horned (سینگ والا)'], ['No Horns (بغیر سینگ)']] },
+  { k: 'vaccinated', label: 'Vaccinated / ویکسین', opts: [['Vaccinated (ہاں)'], ['Not Yet (نہیں)']] }
+];
+const ATTR_PREFIXES = ['f', 'a'];
+function buildAttrFields(prefix, containerId) {
+  const wrap = document.getElementById(containerId); if (!wrap) return;
+  wrap.innerHTML = EXTRA_ATTRS.map(a =>
+    '<div class="field"><label style="font-size:11px">' + a.label + '</label><select id="' + prefix + '-' + a.k + '"><option value="">—</option>' +
+    a.opts.map(o => '<option>' + o[0] + '</option>').join('') + '</select></div>'
+  ).join('');
+}
+function getAttrValues(prefix) {
+  const out = {};
+  EXTRA_ATTRS.forEach(a => { const el = document.getElementById(prefix + '-' + a.k); if (el) out[a.k] = el.value; });
+  return out;
+}
+function setAttrValues(prefix, rec) {
+  EXTRA_ATTRS.forEach(a => { const el = document.getElementById(prefix + '-' + a.k); if (el) el.value = rec[a.k] || ''; });
+}
+function clearAttrValues(prefix) {
+  EXTRA_ATTRS.forEach(a => { const el = document.getElementById(prefix + '-' + a.k); if (el) el.value = ''; });
+}
 function populateBreedSelects() {
   ['f-breed', 'a-breed', 'p-breed'].forEach(id => {
     const s = document.getElementById(id); if (!s) return;
@@ -919,6 +951,7 @@ function goatCard(g, sold) {
         '<a class="wa-inline" target="_blank" href="' + waLink(g) + '" title="WhatsApp">💬</a></h3>' +
       '<div class="breed">' + esc(g.breed) + '</div>' +
       '<div class="goat-meta"><span>🎂 ' + esc(g.age) + ' ' + t('mo') + '</span><span>⚖ ' + esc(g.weight) + ' ' + t('kg') + '</span><span>' + (g.gender === 'Male' ? '♂ ' + t('male') : '♀ ' + t('female')) + '</span></div>' +
+      (function(){ const bits = []; if (g.pregnant) bits.push('🤰 ' + esc(g.pregnant)); if (g.teeth) bits.push('🦷 ' + esc(g.teeth)); if (g.milking) bits.push('🥛 ' + esc(g.milking)); if (g.horns) bits.push('🦌 ' + esc(g.horns)); if (g.vaccinated) bits.push('💉 ' + esc(g.vaccinated)); return bits.length ? '<div class="goat-extras">' + bits.join(' · ') + '</div>' : ''; })() +
       (g.notes ? '<div style="font-size:12.5px;color:var(--gray)">' + esc(g.notes) + '</div>' : '') +
       '<div class="goat-price">Rs ' + Number(g.price || 0).toLocaleString() + '</div>' +
       '<div class="cta-row">' +
@@ -1039,6 +1072,7 @@ function resetForm() {
   document.getElementById('a-source').value = 'farm';
   ['f-breed','a-breed'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
   ['f-breed-other','a-breed-other'].forEach(id => { const el = document.getElementById(id); if (el) el.style.display = 'none'; });
+  clearAttrValues('f'); clearAttrValues('a');
   ['f-photo','a-photo','fm-cnic-photo','a-cnic-photo'].forEach(id => {
     const el = document.getElementById(id); if (el) el.value = '';
     const cap = document.querySelector('label[for="' + id + '"] span[data-i18n]'); if (cap) cap.textContent = t('pic_add');
@@ -1072,6 +1106,7 @@ function editGoat(id) {
   document.getElementById('a-cnic').value = g.cnic || '';
   document.getElementById('a-address').value = g.address || '';
   document.getElementById('a-notes').value = g.notes || '';
+  setAttrValues('a', g);
   currentPhoto = g.photo || null;
   if (currentPhoto) { const pv = document.getElementById('a-photo-preview'); pv.src = currentPhoto; pv.style.display = 'block'; }
   const apLbl = document.querySelector('label[for="a-photo"] span[data-i18n]'); if (apLbl) apLbl.textContent = currentPhoto ? t('pic_change') : t('pic_add');
@@ -1116,6 +1151,7 @@ function saveGoat() {
     farmerName: sellerName, farmerPhone: sellerPhone,
     contactPhone: src === 'seller' ? sellerPhone : FARM_PHONE
   };
+  EXTRA_ATTRS.forEach(a => { rec[a.k] = getAttrValues('a')[a.k] || ''; });
   if (prev) {
     const idx = prev.list.findIndex(r => r.id === rec.id);
     prev.list[idx] = rec;
@@ -1150,6 +1186,7 @@ function editMyListing(id) {
   document.getElementById('f-weight').value = g.weight;
   document.getElementById('f-price').value = g.price;
   document.getElementById('f-notes').value = g.notes || '';
+  setAttrValues('f', g);
   currentPhoto = g.photo || null;
   if (currentPhoto) { const pv = document.getElementById('photo-preview'); pv.src = currentPhoto; pv.style.display = 'block'; }
   currentCnicPhoto = g.cnicPhoto || null;
@@ -1216,6 +1253,7 @@ function submitFarmerGoat() {
     photo: currentPhoto, cnic: cnic, cnicPhoto: currentCnicPhoto, created: Date.now(),
     farmerName: farmerName, farmerPhone: farmerPhone, contactPhone: farmerPhone
   };
+  EXTRA_ATTRS.forEach(a => { rec[a.k] = getAttrValues('f')[a.k] || ''; });
   saveSellerRecords(getSellerRecords().concat([rec]));
   resetForm(); renderAll();
   toast(t('toast_sub'));
@@ -1352,6 +1390,8 @@ if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.
   navigator.serviceWorker.register('sw.js').catch(() => {});
 }
 populateBreedSelects();
+buildAttrFields('f', 'f-attrs');
+buildAttrFields('a', 'a-attrs');
 resetPurchaseForm();
 (function migrateStores() {
   if (localStorage.getItem(LS_FARMER_KEY) === null) {   // one-time: split old mixed list
