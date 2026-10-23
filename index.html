@@ -159,6 +159,10 @@
   .foot-bottom { text-align: center; padding: 12px; font-size: 12.5px; border-top: 1px solid rgba(255,255,255,.2); }
   footer .urdu { font-family: 'Noto Nastaliq Urdu', serif; }
   .admin-tabs { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+  .role-tabs { display: flex; gap: 8px; margin-bottom: 12px; }
+  .role-tab { flex: 1; background: #fff; color: var(--green); border: 2px solid var(--green-2); padding: 9px 10px; border-radius: 12px; cursor: pointer; font-size: 13.5px; font-weight: 700; font-family: inherit; transition: all .2s; }
+  .role-tab.active { background: var(--green-2); color: #fff; }
+  body.role-user .admin-only { display: none !important; }
   .admin-tab-btn { flex: 1; min-width: 130px; background: #fff; color: var(--green); border: 2px solid var(--green-2); padding: 10px 16px; border-radius: 12px; cursor: pointer; font-size: 14.5px; font-weight: 700; font-family: inherit; transition: all .2s; }
   .admin-tab-btn.active { background: var(--green-2); color: #fff; }
   .admin-note { font-size: 12px; color: var(--gray); margin-top: 8px; }
@@ -318,14 +322,19 @@
     <div id="pin-gate" class="pin-gate panel">
       <h2 class="section" style="border:none;padding:0;text-align:center;" data-i18n="admin_title">🔐 Admin Access</h2>
       <p style="color:var(--gray);font-size:14px;" data-i18n="admin_note">Enter the admin PIN to manage goat records and farmer submissions.</p>
+      <div class="role-tabs">
+        <button class="role-tab active" id="role-admin-btn" onclick="setGateRole('admin')">👑 <span data-i18n="role_admin">Admin</span></button>
+        <button class="role-tab" id="role-user-btn" onclick="setGateRole('user')">👤 <span data-i18n="role_user">User — M.K Dhadra</span></button>
+      </div>
       <input type="password" id="pin-input" maxlength="6" inputmode="numeric" pattern="[0-9]*" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="••••" onkeydown="if(event.key==='Enter')tryPin()">
-      <button class="btn btn-primary" style="width:100%" onclick="tryPin()" data-i18n="unlock">Unlock Admin</button>
+      <button class="btn btn-primary" style="width:100%" onclick="tryPin()" data-i18n="unlock">Unlock</button>
     </div>
 
     <div id="admin-content" style="display:none">
       <div class="admin-tabs">
         <button class="admin-tab-btn active" id="atab-sale" onclick="switchAdminTab('sale')">💰 <span data-i18n="sale_tab">Sale</span></button>
         <button class="admin-tab-btn" id="atab-purchase" onclick="switchAdminTab('purchase')">🛒 <span data-i18n="pur_tab">Purchases</span></button>
+        <button class="admin-tab-btn" id="lock-btn" onclick="lockAdmin()">🔒 Lock</button>
       </div>
       <div id="admin-sale-tab">
       <div class="stats">
@@ -336,7 +345,7 @@
         <div class="stat draft"><div class="num" id="st-draft">0</div><div class="lbl" data-i18n="st_draft">Drafts (Hidden)</div></div>
       </div>
 
-      <div class="panel">
+      <div class="panel admin-only">
         <h3 data-i18n="pend_title">✅ Farmer Submissions (Pending Review)</h3>
         <div style="overflow-x:auto">
           <table class="goats">
@@ -409,13 +418,13 @@
           </table>
         </div>
         <div id="seller-rec-empty" style="color:var(--gray);font-size:13.5px;padding:8px 0;" data-i18n="seller_rec_empty">No seller listings yet.</div>
-        <div class="tools">
+        <div class="tools admin-only">
           <button class="btn btn-ghost" onclick="exportData()" data-i18n="export_b">⬇ Export Backup (JSON)</button>
           <label class="btn btn-ghost" style="margin:0">⬆ Import Backup<input type="file" id="import-file" accept=".json" style="display:none" onchange="importData(this)"></label>
         </div>
       </div>
 
-      <div class="panel">
+      <div class="panel admin-only">
         <h3 data-i18n="pin_title">🔑 Change Admin PIN</h3>
         <div class="form-grid">
           <div class="field"><label data-i18n="pin_current">Current PIN</label><input type="password" id="pin-cur" maxlength="6" inputmode="numeric" autocomplete="off"></div>
@@ -425,6 +434,17 @@
           <button class="btn btn-primary" onclick="changeAdminPin()" data-i18n="pin_save">💾 Update PIN</button>
         </div>
         <div class="admin-note" data-i18n="pin_note">The PIN is stored on this device only. If you forget it, clear the site data in your browser to return to the default 1234.</div>
+      </div>
+
+      <div class="panel admin-only">
+        <h3 data-i18n="user_pin_title">👤 User PIN (M.K Dhadra)</h3>
+        <div class="form-grid">
+          <div class="field"><label data-i18n="user_pin_new">New User PIN (4-6 digits)</label><input type="password" id="upin-new" maxlength="6" inputmode="numeric" autocomplete="off"></div>
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-primary" onclick="changeUserPin()" data-i18n="pin_save">💾 Update User PIN</button>
+        </div>
+        <div class="admin-note" data-i18n="user_pin_note">The user (M.K Dhadra) signs in with this PIN from the login screen. Default: 1111 — synced to the cloud like the admin PIN.</div>
       </div>
       </div>
 
@@ -525,6 +545,10 @@ const I18N = {
     pin_ok: '✓ Admin PIN updated', pin_wrong_cur: 'Current PIN is incorrect', pin_bad: 'New PIN must be 4-6 digits (and different)',
     pin_custom_hint: 'This device has a different admin PIN. Enter the synced admin PIN (set via Change PIN on the main device), or clear this site\'s data to use 1234.',
     pin_cloud_fail: 'cloud sync unavailable — saved on this device only',
+    role_admin: 'Admin', role_user: 'User — M.K Dhadra', lock_b: 'Lock',
+    user_pin_title: '👤 User PIN (M.K Dhadra)', user_pin_new: 'New User PIN (4-6 digits)', user_pin_ok: '✓ User PIN updated',
+    user_pin_note: 'The user (M.K Dhadra) signs in with this PIN from the login screen. Default: 1111 — synced to the cloud like the admin PIN.',
+    admin_only_note: 'Admin only',
     sale_tab: '💰 Sale', pur_tab: '🛒 Purchases', pur_title: '🛒 Purchase Records', pur_add_title: '➕ Add Purchase Record',
     p_date: 'Purchase Date', p_price: 'Purchase Price (PKR)', p_seller: 'Bought From (Seller)', p_sphone: 'Seller Phone', p_scnic: 'Seller CNIC (optional)',
     pur_save: '💾 Save Purchase', pur_upd_title: '✏ Edit Purchase', pur_del_confirm: 'Delete this purchase?',
@@ -588,6 +612,10 @@ const I18N = {
     pin_ok: '✓ ایڈمن PIN تبدیل ہو گیا', pin_wrong_cur: 'موجودہ PIN غلط ہے', pin_bad: 'نیا PIN چار سے چھ ہندسوں کا اور پرانے سے مختلف ہونا چاہیے',
     pin_custom_hint: 'اس ڈیوائس کا ایڈمن PIN مختلف ہے۔ سنک شدہ PIN درج کریں (بنیادی ڈیوائس سے Change PIN)، یا اس سائٹ کا ڈیٹا صاف کر کے 1234 استعمال کریں۔',
     pin_cloud_fail: 'کلاؤڈ سنک دستیاب نہیں — صرف اسی ڈیوائس پر محفوظ ہوا',
+    role_admin: 'ایڈمن', role_user: 'یوزر — ایم۔کے دھدرا', lock_b: 'لاک',
+    user_pin_title: '👤 یوزر PIN (ایم۔کے دھدرا)', user_pin_new: 'نیا یوزر PIN (4-6 ہندسے)', user_pin_ok: '✓ یوزر PIN تبدیل ہو گیا',
+    user_pin_note: 'یوزر (ایم۔کے دھدرا) لاگ اِن اسکرین سے اسی PIN سے داخل ہوگا۔ ڈیفالٹ: 1111 — ایڈمن PIN کی طرح کلاؤڈ پر سنک ہوتا ہے۔',
+    admin_only_note: 'صرف ایڈمن',
     sale_tab: '💰 فروخت', pur_tab: '🛒 خریداری', pur_title: '🛒 خریداری ریکارڈ', pur_add_title: '➕ نئی خریداری درج کریں',
     p_date: 'خریداری کی تاریخ', p_price: 'خریداری قیمت (روپے)', p_seller: 'کس سے خریدا (بیچنے والا)', p_sphone: 'بیچنے والے کا فون', p_scnic: 'بیچنے والے کا شناختی کارڈ (اختیاری)',
     pur_save: '💾 خریداری محفوظ کریں', pur_upd_title: '✏ خریداری میں ترمیم', pur_del_confirm: 'یہ خریداری حذف کریں؟',
@@ -796,6 +824,7 @@ function editPurchase(id) {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 function deletePurchase(id) {
+  if (currentUserRole !== 'admin') { toast(t('admin_only_note')); return; }
   const rec = getPurchases().find(r => r.id === id);
   if (!rec) return;
   if (!confirm(t('pur_del_confirm') + ' "' + rec.name + '"?')) return;
@@ -861,7 +890,18 @@ function switchTab(tab) {
 /* ============ PIN ============ */
 const PIN_CLOUD = 'https://textdb.dev/api/data/mizaliz-dhadra-farm-pin-2026-x7q';
 const PIN_SALT = 'dhadra-farm-2026-pin';
+const USER_DEFAULT_PIN = '1111';
+let gateRole = 'admin';
+let currentUserRole = null;   // 'admin' | 'user'
 function currentPin() { return localStorage.getItem('dhadra_admin_pin') || ADMIN_PIN; }
+function currentUserPin() { return localStorage.getItem('dhadra_user_pin') || USER_DEFAULT_PIN; }
+function setGateRole(role) {
+  gateRole = role;
+  document.getElementById('role-admin-btn').classList.toggle('active', role === 'admin');
+  document.getElementById('role-user-btn').classList.toggle('active', role === 'user');
+  document.getElementById('pin-input').value = '';
+  document.getElementById('pin-input').placeholder = role === 'admin' ? 'Admin PIN' : 'User PIN';
+}
 async function pinHash(pin) {
   if (!window.crypto || !crypto.subtle) return null;
   try {
@@ -871,22 +911,25 @@ async function pinHash(pin) {
     return Array.from(new Uint8Array(bits)).map(b => b.toString(16).padStart(2, '0')).join('');
   } catch (e) { return null; }
 }
-async function getCloudPinHash() {
+async function getCloudHash(key) {
   try {
     const r = await fetch(PIN_CLOUD + '?t=' + Date.now(), { cache: 'no-store' });
     if (r.ok) {
       const j = JSON.parse((await r.text()) || '{}');
-      const h = j && j.pinHash ? j.pinHash : null;
-      if (h) localStorage.setItem('dhadra_cloud_pin_hash', h);
+      const h = j && j[key] ? j[key] : null;
+      if (h) localStorage.setItem('dhadra_cloud_' + key, h);
       return h;
     }
   } catch (e) {}
-  return localStorage.getItem('dhadra_cloud_pin_hash');
+  return localStorage.getItem('dhadra_cloud_' + key);
 }
-async function saveCloudPinHash(hash) {
+async function saveCloudHash(key, hash) {
   try {
-    const r = await fetch(PIN_CLOUD, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ pinHash: hash }) });
-    if (r.ok) { localStorage.setItem('dhadra_cloud_pin_hash', hash); return true; }
+    let blob = {};
+    try { const cur = await (await fetch(PIN_CLOUD + '?t=' + Date.now())).text(); blob = JSON.parse(cur || '{}'); } catch (e) {}
+    blob[key] = hash;
+    const r = await fetch(PIN_CLOUD, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(blob) });
+    if (r.ok) { localStorage.setItem('dhadra_cloud_' + key, hash); return true; }
   } catch (e) {}
   return false;
 }
@@ -895,22 +938,56 @@ function adminUnlock() {
   document.getElementById('pin-gate').style.display = 'none';
   document.getElementById('admin-content').style.display = 'block';
   document.getElementById('pin-input').value = '';
+  applyRoleUI();
   renderAll();
+  if (currentUserRole === 'user') switchAdminTab('sale');
+}
+function setGateRole(role) {
+  gateRole = role;
+  document.getElementById('role-admin-btn').classList.toggle('active', role === 'admin');
+  document.getElementById('role-user-btn').classList.toggle('active', role === 'user');
+  document.getElementById('pin-input').value = '';
+}
+function applyRoleUI() {
+  document.body.classList.toggle('role-user', currentUserRole === 'user');
+  const lockBtn = document.getElementById('lock-btn');
+  if (lockBtn) lockBtn.textContent = '🔒 ' + t('lock_b') + ' (' + (currentUserRole === 'user' ? t('role_user') : t('role_admin')) + ')';
+}
+function lockAdmin() {
+  adminUnlocked = false; currentUserRole = null;
+  document.getElementById('admin-content').style.display = 'none';
+  document.getElementById('pin-gate').style.display = 'block';
+  document.getElementById('pin-input').value = '';
+  switchTab('admin');
 }
 async function tryPin() {
   const entered = String(document.getElementById('pin-input').value || '').replace(/\s/g, '');
-  const devicePin = currentPin();
-  if (entered === devicePin) { adminUnlock(); return; }
-  const cloudHash = await getCloudPinHash();
-  if (cloudHash) {
-    const enteredHash = await pinHash(entered);
-    if (enteredHash && enteredHash === cloudHash) {
-      localStorage.setItem('dhadra_admin_pin', entered);   // one PIN everywhere: self-heal this device
-      adminUnlock(); return;
+  if (gateRole === 'admin') {
+    const devicePin = currentPin();
+    if (entered === devicePin) { currentUserRole = 'admin'; adminUnlock(); return; }
+    const cloudHash = await getCloudHash('pinHash');
+    if (cloudHash) {
+      const enteredHash = await pinHash(entered);
+      if (enteredHash && enteredHash === cloudHash) {
+        localStorage.setItem('dhadra_admin_pin', entered);   // one PIN everywhere: self-heal this device
+        currentUserRole = 'admin'; adminUnlock(); return;
+      }
     }
+    if (entered === ADMIN_PIN && devicePin !== ADMIN_PIN) { toast(t('pin_custom_hint')); }
+    else { toast(t('toast_pin')); }
+  } else {
+    const deviceUserPin = localStorage.getItem('dhadra_user_pin') || USER_DEFAULT_PIN;
+    if (entered === deviceUserPin) { currentUserRole = 'user'; adminUnlock(); return; }
+    const cloudHash = await getCloudHash('userPinHash');
+    if (cloudHash) {
+      const enteredHash = await pinHash(entered);
+      if (enteredHash && enteredHash === cloudHash) {
+        localStorage.setItem('dhadra_user_pin', entered);
+        currentUserRole = 'user'; adminUnlock(); return;
+      }
+    }
+    toast(t('toast_pin'));
   }
-  if (entered === ADMIN_PIN && devicePin !== ADMIN_PIN) { toast(t('pin_custom_hint')); }
-  else { toast(t('toast_pin')); }
 }
 async function changeAdminPin() {
   const cur = String(document.getElementById('pin-cur').value || '').replace(/\s/g, '');
@@ -921,9 +998,20 @@ async function changeAdminPin() {
   document.getElementById('pin-cur').value = '';
   document.getElementById('pin-new').value = '';
   const h = await pinHash(nw);
-  if (h && await saveCloudPinHash(h)) { toast(t('pin_ok') + ' ☁'); }
+  if (h && await saveCloudHash('pinHash', h)) { toast(t('pin_ok') + ' ☁'); }
   else { toast(t('pin_ok') + ' — ' + t('pin_cloud_fail')); }
 }
+async function changeUserPin() {
+  const nw = String(document.getElementById('upin-new').value || '').replace(/\s/g, '');
+  if (!/^\d{4,6}$/.test(nw)) { toast(t('pin_bad')); return; }
+  localStorage.setItem('dhadra_user_pin', nw);
+  document.getElementById('upin-new').value = '';
+  const h = await pinHash(nw);
+  if (h && await saveCloudHash('userPinHash', h)) { toast(t('user_pin_ok') + ' ☁'); }
+  else { toast(t('user_pin_ok') + ' — ' + t('pin_cloud_fail')); }
+}
+
+/* ============ WHATSAPP ============ */
 
 /* ============ WHATSAPP ============ */
 function waDigits(phone) {
@@ -1036,15 +1124,16 @@ function renderAdmin() {
   document.getElementById('pending-empty').style.display = pendList.length ? 'none' : 'block';
   pendList.forEach(g => {
     const tr = document.createElement('tr');
+    const adminBtns = currentUserRole === 'admin'
+      ? '<button class="btn-sm btn-approve" onclick="setStatus(\'' + g.id + '\',\'released\')">' + t('approve') + '</button>' +
+        '<button class="btn-sm btn-del" onclick="deleteGoat(\'' + g.id + '\')">' + t('reject') + '</button>'
+      : '<span style="color:var(--gray);font-size:12px">' + t('admin_only_note') + '</span>';
     tr.innerHTML =
       '<td>' + esc(g.farmerName || '-') + '</td><td class="seller-cell">' + esc(g.farmerPhone || '-') + '</td>' +
       '<td class="seller-cell">' + esc(g.cnic || '-') + '</td>' +
       '<td>' + esc(g.tag) + '</td><td><b>' + esc(g.name) + '</b></td><td>' + esc(g.breed) + '</td>' +
       '<td>' + esc(g.age) + ' ' + t('mo') + '</td><td>' + Number(g.price || 0).toLocaleString() + '</td>' +
-      '<td><div class="actions-cell">' +
-        '<button class="btn-sm btn-approve" onclick="setStatus(\'' + g.id + '\',\'released\')">' + t('approve') + '</button>' +
-        '<button class="btn-sm btn-del" onclick="deleteGoat(\'' + g.id + '\')">' + t('reject') + '</button>' +
-      '</div></td>';
+      '<td><div class="actions-cell">' + adminBtns + '</div></td>';
     pendRows.appendChild(tr);
   });
 
@@ -1060,7 +1149,7 @@ function renderAdmin() {
     if (g.status !== 'draft') acts += '<button class="btn-sm btn-unrelease" onclick="setStatus(\'' + g.id + '\',\'draft\')">' + t('unrelease') + '</button>';
     if (g.status !== 'sold') acts += '<button class="btn-sm btn-sold" onclick="setStatus(\'' + g.id + '\',\'sold\')">' + t('sold_b') + '</button>';
     acts += '<button class="btn-sm btn-edit" onclick="editGoat(\'' + g.id + '\')">' + t('edit_b') + '</button>';
-    acts += '<button class="btn-sm btn-del" onclick="deleteGoat(\'' + g.id + '\')">' + t('del') + '</button>';
+    if (currentUserRole === 'admin') acts += '<button class="btn-sm btn-del" onclick="deleteGoat(\'' + g.id + '\')">' + t('del') + '</button>';
     tr.innerHTML =
       '<td>' + esc(g.tag) + '</td><td><b>' + esc(g.name) + '</b><div class="seller-cell">' + esc(g.farmerName || t('seller_farm')) + '</div></td><td>' + esc(g.breed) + '</td><td>' + esc(g.gender) + '</td>' +
       '<td>' + esc(g.age) + ' ' + t('mo') + '</td><td>' + esc(g.weight) + '</td><td>' + Number(g.price || 0).toLocaleString() + '</td>' +
@@ -1081,7 +1170,7 @@ function renderAdmin() {
     if (g.status !== 'draft') acts += '<button class="btn-sm btn-unrelease" onclick="setStatus(\'' + g.id + '\',\'draft\')">' + t('unrelease') + '</button>';
     if (g.status !== 'sold') acts += '<button class="btn-sm btn-sold" onclick="setStatus(\'' + g.id + '\',\'sold\')">' + t('sold_b') + '</button>';
     acts += '<button class="btn-sm btn-edit" onclick="editGoat(\'' + g.id + '\')">' + t('edit_b') + '</button>';
-    acts += '<button class="btn-sm btn-del" onclick="deleteGoat(\'' + g.id + '\')">' + t('del') + '</button>';
+    if (currentUserRole === 'admin') acts += '<button class="btn-sm btn-del" onclick="deleteGoat(\'' + g.id + '\')">' + t('del') + '</button>';
     tr.innerHTML =
       '<td>' + esc(g.tag) + '</td><td><b>' + esc(g.name) + '</b></td>' +
       '<td><div>' + esc(g.farmerName || '-') + '</div><div class="seller-cell">' + esc(g.farmerPhone || '') + '</div><div class="seller-cell">' + esc(g.cnic || '') + '</div></td>' +
