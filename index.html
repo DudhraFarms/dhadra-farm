@@ -71,6 +71,9 @@
 
   .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(235px, 1fr)); gap: 12px; }
   .goat-extras { font-size: 11.5px; color: var(--green); font-weight: 600; line-height: 1.5; }
+  #attr-filters { display: none; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+  #attr-filters.open { display: flex; }
+  #attr-filters select { flex: 1; min-width: 150px; font-size: 13px; padding: 9px 10px; border: 1px solid var(--border); border-radius: 9px; font-family: inherit; background: #fff; }
   .attr-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; margin-top: 10px; }
   .attr-grid select { font-size: 13px; padding: 8px 10px; }
   .badge-sold { background: #8d6e63; }
@@ -217,7 +220,9 @@
         <option value="price-desc" data-i18n="sort_pd">Price: high to low</option>
         <option value="age-asc" data-i18n="sort_aa">Youngest first</option>
       </select>
+      <button class="btn btn-ghost" id="attr-filters-toggle" onclick="toggleAttrFilters()" data-i18n="more_filters">⚙ More filters ▾</button>
     </div>
+    <div id="attr-filters"></div>
     <div id="public-grid" class="grid"></div>
     <div id="public-empty" class="empty" style="display:none"><div class="big">🐐</div><span data-i18n="empty1">No animals match your filters right now.</span><br><span data-i18n="empty2">New stock is released regularly — check back soon.</span></div>
 
@@ -446,6 +451,7 @@
             <div class="field"><label data-i18n="p_scnic">Seller CNIC (optional)</label><input id="p-scnic" data-i18n-ph="t_cnic_ph" placeholder="e.g. 36102-1234567-1" maxlength="15"></div>
             <div class="field"><label data-i18n="t_notes">Notes</label><input id="p-notes" data-i18n-ph="t_notes_ph" placeholder="Condition, markings..."></div>
           </div>
+          <div class="attr-grid" id="p-attrs"></div>
           <div class="form-actions">
             <button class="btn btn-primary" onclick="savePurchase()" data-i18n="pur_save">💾 Save Purchase</button>
             <button class="btn btn-ghost" id="btn-pur-cancel" onclick="resetPurchaseForm()" style="display:none" data-i18n="my_cancel">Cancel</button>
@@ -456,7 +462,7 @@
           <h3 data-i18n="pur_title">🛒 Purchase Records</h3>
           <div style="overflow-x:auto">
             <table class="goats">
-              <thead><tr><th data-i18n="p_date">Date</th><th data-i18n="t_tag">Tag</th><th data-i18n="t_name">Name</th><th data-i18n="t_breed">Breed</th><th data-i18n="p_seller">Seller</th><th data-i18n="p_price">Price (PKR)</th><th data-i18n="t_actions">Actions</th></tr></thead>
+              <thead><tr><th data-i18n="p_date">Date</th><th data-i18n="t_tag">Tag</th><th data-i18n="t_name">Name</th><th data-i18n="t_breed">Breed</th><th data-i18n="p_seller">Seller</th><th data-i18n="p_price">Price (PKR)</th><th data-i18n="attr_th">Details</th><th data-i18n="t_actions">Actions</th></tr></thead>
               <tbody id="purchase-rows"></tbody>
             </table>
           </div>
@@ -524,6 +530,7 @@ const I18N = {
     pur_save: '💾 Save Purchase', pur_upd_title: '✏ Edit Purchase', pur_del_confirm: 'Delete this purchase?',
     pur_empty: 'No purchases recorded yet.', pur_count_stat: 'Purchases', pur_spend: 'Total Spent (PKR)', pur_month: 'Spent This Month (PKR)',
     toast_pur_add: 'Purchase added', toast_pur_upd: 'Purchase updated', toast_pur_del: 'Purchase deleted',
+    more_filters: '⚙ More filters ▾', more_filters_hide: '⚙ Hide filters ▴', attr_th: 'Details',
     pin_note: 'The PIN is stored on this device only. If you forget it, clear the site data in your browser to return to the default 1234.',
     pic_photo: 'Animal Photo *', pic_cnic: 'CNIC Card Photo *', pic_cnic_opt: 'CNIC Card Photo', pic_add: 'Tap to add', pic_change: 'Change',
     my_note: 'Enter the same phone number you used when submitting your animal. Only approved (live) listings can be marked as sold.',
@@ -586,6 +593,7 @@ const I18N = {
     pur_save: '💾 خریداری محفوظ کریں', pur_upd_title: '✏ خریداری میں ترمیم', pur_del_confirm: 'یہ خریداری حذف کریں؟',
     pur_empty: 'ابھی کوئی خریداری درج نہیں۔', pur_count_stat: 'خریداریاں', pur_spend: 'کل خرچ (روپے)', pur_month: 'اس مہینے کا خرچ (روپے)',
     toast_pur_add: 'خریداری شامل ہو گئی', toast_pur_upd: 'خریداری اپ ڈیٹ ہو گئی', toast_pur_del: 'خریداری حذف ہو گئی',
+    more_filters: '⚙ مزید فلٹر ▾', more_filters_hide: '⚙ فلٹر چھپائیں ▴', attr_th: 'خصوصیات',
     pin_note: 'PIN صرف اسی ڈیوائس پر محفوظ ہوتا ہے۔ اگر بھول جائیں تو براؤزر کا سائٹ ڈیٹا صاف کریں — پہلے والا 1234 واپس آ جائے گا۔',
     pic_photo: 'جانور کی تصویر *', pic_cnic: 'شناختی کارڈ کی تصویر *', pic_cnic_opt: 'شناختی کارڈ کی تصویر', pic_add: 'تصویر لگائیں', pic_change: 'تبدیل کریں',
     my_note: 'جمع کروانے کے وقت والا وہی فون نمبر لکھیں۔ صرف منظور شدہ (لائیو) لسٹیں فروخت شدہ کی جا سکتی ہیں۔',
@@ -724,6 +732,7 @@ function resetPurchaseForm() {
   document.getElementById('p-gender').value = 'Male';
   const bs = document.getElementById('p-breed'); if (bs) bs.value = '';
   const bo = document.getElementById('p-breed-other'); if (bo) bo.style.display = 'none';
+  clearAttrValues('p');
   document.getElementById('p-date').value = new Date().toISOString().slice(0, 10);
   document.getElementById('pur-form-title').textContent = t('pur_add_title');
   document.getElementById('btn-pur-cancel').style.display = 'none';
@@ -752,6 +761,7 @@ function savePurchase() {
     notes: document.getElementById('p-notes').value.trim(),
     created: Date.now()
   };
+  EXTRA_ATTRS.forEach(a => { const el = document.getElementById('p-' + a.k); rec[a.k] = el ? el.value : ''; });
   const list = getPurchases();
   const idx = list.findIndex(r => r.id === rec.id);
   if (idx >= 0) list[idx] = rec; else list.push(rec);
@@ -780,6 +790,7 @@ function editPurchase(id) {
   document.getElementById('p-sphone').value = rec.sellerPhone || '';
   document.getElementById('p-scnic').value = rec.sellerCnic || '';
   document.getElementById('p-notes').value = rec.notes || '';
+  setAttrValues('p', rec);
   document.getElementById('pur-form-title').textContent = '✏ ' + t('pur_upd_title');
   document.getElementById('btn-pur-cancel').style.display = 'inline-block';
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -805,10 +816,12 @@ function renderPurchases() {
   empty.style.display = list.length ? 'none' : 'block';
   list.slice().sort((a, b) => (b.purchaseDate || '').localeCompare(a.purchaseDate || '')).forEach(r => {
     const tr = document.createElement('tr');
+    const purBits = []; if (r.pregnant) purBits.push('🤰'); if (r.teeth) purBits.push('🦷 ' + esc(r.teeth)); if (r.milking) purBits.push('🥛'); if (r.horns) purBits.push('🦌'); if (r.vaccinated) purBits.push('💉');
     tr.innerHTML =
       '<td>' + esc(r.purchaseDate || '-') + '</td><td>' + esc(r.tag) + '</td><td><b>' + esc(r.name) + '</b></td><td>' + esc(r.breed) + '</td>' +
       '<td><div>' + esc(r.sellerName) + '</div><div class="seller-cell">' + esc(r.sellerPhone || '') + '</div></td>' +
       '<td>' + Number(r.price || 0).toLocaleString() + '</td>' +
+      '<td>' + (purBits.length ? purBits.join(' ') : '-') + '</td>' +
       '<td><div class="actions-cell">' +
         '<button class="btn-sm btn-edit" onclick="editPurchase(\'' + r.id + '\')">' + t('edit_b') + '</button>' +
         '<button class="btn-sm btn-del" onclick="deletePurchase(\'' + r.id + '\')">' + t('del') + '</button>' +
@@ -925,11 +938,30 @@ function waLink(g) {
 }
 
 /* ============ PUBLIC RENDER (segregated) ============ */
-function prepList(raw, q, breed, gender, sort, status) {
+function buildAttrFilters() {
+  const wrap = document.getElementById('attr-filters'); if (!wrap) return;
+  wrap.innerHTML = EXTRA_ATTRS.map(a =>
+    '<select id="pf-' + a.k + '" onchange="renderPublic()"><option value="">' + a.label + '</option>' +
+    a.opts.map(o => '<option>' + o[0] + '</option>').join('') + '</select>'
+  ).join('');
+}
+function toggleAttrFilters() {
+  const wrap = document.getElementById('attr-filters');
+  const btn = document.getElementById('attr-filters-toggle');
+  const open = wrap.classList.toggle('open');
+  if (btn) btn.textContent = open ? t('more_filters_hide') : t('more_filters');
+}
+function getAttrFilters() {
+  const attrs = {};
+  EXTRA_ATTRS.forEach(a => { const el = document.getElementById('pf-' + a.k); if (el && el.value) attrs[a.k] = el.value; });
+  return attrs;
+}
+function prepList(raw, q, breed, gender, sort, status, attrs) {
   let list = raw.filter(r => r.status === (status || 'released'));
   if (q) list = list.filter(r => (r.name + ' ' + r.tag).toLowerCase().includes(q));
   if (breed) list = list.filter(r => r.breed === breed);
   if (gender) list = list.filter(r => r.gender === gender);
+  if (attrs) { for (const k in attrs) { list = list.filter(r => r[k] === attrs[k]); } }
   if (sort === 'price-asc') list.sort((a, b) => (a.price || 0) - (b.price || 0));
   else if (sort === 'price-desc') list.sort((a, b) => (b.price || 0) - (a.price || 0));
   else if (sort === 'age-asc') list.sort((a, b) => (a.age || 0) - (b.age || 0));
@@ -973,9 +1005,10 @@ function renderPublic() {
   const breed = document.getElementById('pub-breed').value;
   const gender = document.getElementById('pub-gender').value;
   const sort = document.getElementById('pub-sort').value;
-  renderCardGrid(prepList(getFarmRecords(), q, breed, gender, sort), 'public-grid', 'public-empty');
-  renderCardGrid(prepList(getSellerRecords(), q, breed, gender, sort), 'seller-grid', 'seller-empty');
-  const sold = prepList(getFarmRecords(), q, breed, gender, sort, 'sold').concat(prepList(getSellerRecords(), q, breed, gender, sort, 'sold'));
+  const attrs = getAttrFilters();
+  renderCardGrid(prepList(getFarmRecords(), q, breed, gender, sort, 'released', attrs), 'public-grid', 'public-empty');
+  renderCardGrid(prepList(getSellerRecords(), q, breed, gender, sort, 'released', attrs), 'seller-grid', 'seller-empty');
+  const sold = prepList(getFarmRecords(), q, breed, gender, sort, 'sold', attrs).concat(prepList(getSellerRecords(), q, breed, gender, sort, 'sold', attrs));
   document.getElementById('sold-section').style.display = sold.length ? 'block' : 'none';
   document.getElementById('sold-count').textContent = sold.length;
   renderCardGrid(sold, 'sold-grid', 'sold-empty', true);
@@ -1392,6 +1425,8 @@ if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.
 populateBreedSelects();
 buildAttrFields('f', 'f-attrs');
 buildAttrFields('a', 'a-attrs');
+buildAttrFields('p', 'p-attrs');
+buildAttrFilters();
 resetPurchaseForm();
 (function migrateStores() {
   if (localStorage.getItem(LS_FARMER_KEY) === null) {   // one-time: split old mixed list
