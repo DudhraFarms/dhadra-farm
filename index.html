@@ -196,7 +196,7 @@
   </div>
   <div class="hdr-right">
     <nav class="tabs">
-      <button class="tab-btn active" id="tab-public" onclick="switchTab('public')"><span data-i18n="nav_public">🌍 Public</span></button>
+      <button class="tab-btn active" id="tab-public" onclick="switchTab('public')"><span data-i18n="nav_public">🏠 Home</span></button>
       <button class="tab-btn" id="tab-farmer" onclick="switchTab('farmer')"><span data-i18n="nav_farmer">➕ Sell Your Goat</span></button>
       <button class="tab-btn" id="tab-admin" onclick="switchTab('admin')"><span data-i18n="nav_admin">🔐 Admin</span></button>
     </nav>
@@ -336,11 +336,11 @@
 
     <div id="admin-content" style="display:none">
       <div class="admin-tabs">
-        <button class="admin-tab-btn active" id="atab-sale" onclick="switchAdminTab('sale')">💰 <span data-i18n="sale_tab">Sale</span></button>
-        <button class="admin-tab-btn" id="atab-purchase" onclick="switchAdminTab('purchase')">🛒 <span data-i18n="pur_tab">Purchases</span></button>
+        <button class="admin-tab-btn active" id="atab-purchase" onclick="switchAdminTab('purchase')">🛒 <span data-i18n="pur_tab">Purchases</span></button>
+        <button class="admin-tab-btn" id="atab-sale" onclick="switchAdminTab('sale')">💰 <span data-i18n="sale_tab">Sale</span></button>
         <button class="admin-tab-btn" id="lock-btn" onclick="lockAdmin()">🔒 Lock</button>
       </div>
-      <div id="admin-sale-tab">
+      <div id="admin-sale-tab" style="display:none">
       <div class="stats">
         <div class="stat total"><div class="num" id="st-total">0</div><div class="lbl" data-i18n="st_total">Total Records</div></div>
         <div class="stat avail"><div class="num" id="st-avail">0</div><div class="lbl" data-i18n="st_avail">Available (Released)</div></div>
@@ -453,7 +453,7 @@
       </div>
       </div>
 
-      <div id="admin-purchase-tab" style="display:none">
+      <div id="admin-purchase-tab">
         <div class="stats">
           <div class="stat"><div class="num" id="pt-count">0</div><div class="lbl" data-i18n="pur_count_stat">Purchases</div></div>
           <div class="stat"><div class="num" id="pt-spend">0</div><div class="lbl" data-i18n="pur_spend">Total Spent (PKR)</div></div>
@@ -519,7 +519,7 @@
 /* ============ I18N ============ */
 const I18N = {
   en: {
-    nav_public: '🌍 Public', nav_farmer: '➕ Sell Your Goat', nav_admin: '🔐 Users',
+    nav_public: '🏠 Home', nav_farmer: '➕ Sell Your Goat', nav_admin: '🔐 Users',
     badge: 'Livestock For Sale', hero_title: 'Find Your Perfect Goat',
     hero_p: 'Raised free-range with natural feed and full veterinary care. Browse the animals currently available for sale — from our farm and trusted partner farmers.',
     sec_avail: 'Available Animals', search_ph: 'Search by name or ID...',
@@ -585,7 +585,7 @@ const I18N = {
     f_contact: 'Contact & Location', f_addr: 'Chak # 31/11/L, Hussan Abdaal, Chichawatani'
   },
   ur: {
-    nav_public: '🌍 پبلک سائٹ', nav_farmer: '➕ اپنی بکری فروخت کریں', nav_admin: '🔐 یوزرز',
+    nav_public: '🏠 ۆم', nav_farmer: '➕ اپنی بکری فروخت کریں', nav_admin: '🔐 یوزرز',
     badge: 'فروخت کے لیے مویشی', hero_title: 'اپنی پسند کی بکری تلاش کریں',
     hero_p: 'قدرتی خوراک اور مکمل ویٹرنری نگہداشت کے ساتھ آزادانه پالے گئے۔ ابھی دستیاب جانور دیکھیں — ہمارے فارم اور بھروسہ مند پارٹنر کسانوں کی جانب سے۔',
     sec_avail: 'دستیاب بکریاں', search_ph: 'نام یا ٹیگ سے تلاش کریں...',
@@ -956,7 +956,7 @@ function adminUnlock() {
   document.getElementById('pin-input').value = '';
   applyRoleUI();
   renderAll();
-  if (currentUserRole === 'user') switchAdminTab('sale');
+  switchAdminTab('purchase');
 }
 function unlockAsUser(userId) {
   currentUserRole = 'user';
