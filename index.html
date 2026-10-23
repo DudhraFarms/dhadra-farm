@@ -324,8 +324,12 @@
       <p style="color:var(--gray);font-size:14px;" data-i18n="admin_note">Enter the admin PIN to manage goat records and farmer submissions.</p>
       <div class="role-tabs">
         <button class="role-tab active" id="role-admin-btn" onclick="setGateRole('admin')">👑 <span data-i18n="role_admin">Admin</span></button>
-        <button class="role-tab" id="role-user-btn" onclick="setGateRole('user')">👤 <span data-i18n="role_user">User — M.K Dhadra</span></button>
+        <button class="role-tab" id="role-user-btn" onclick="setGateRole('user')">👤 <span data-i18n="role_user">User</span></button>
       </div>
+      <select id="gate-user-select" style="display:none" onchange="setGateUser(this.value)">
+        <option value="mkdhadra">M.K Dhadra</option>
+        <option value="ubaidullah">UbaidUllah</option>
+      </select>
       <input type="password" id="pin-input" maxlength="6" inputmode="numeric" pattern="[0-9]*" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="••••" onkeydown="if(event.key==='Enter')tryPin()">
       <button class="btn btn-primary" style="width:100%" onclick="tryPin()" data-i18n="unlock">Unlock</button>
     </div>
@@ -437,14 +441,15 @@
       </div>
 
       <div class="panel admin-only">
-        <h3 data-i18n="user_pin_title">👤 User PIN (M.K Dhadra)</h3>
+        <h3 data-i18n="user_pin_title">👤 User PINs</h3>
         <div class="form-grid">
-          <div class="field"><label data-i18n="user_pin_new">New User PIN (4-6 digits)</label><input type="password" id="upin-new" maxlength="6" inputmode="numeric" autocomplete="off"></div>
+          <div class="field"><label data-i18n="user_pick">User</label><select id="upin-user"><option value="mkdhadra">M.K Dhadra</option><option value="ubaidullah">UbaidUllah</option></select></div>
+          <div class="field"><label data-i18n="user_pin_new">New PIN (4-6 digits)</label><input type="password" id="upin-new" maxlength="6" inputmode="numeric" autocomplete="off"></div>
         </div>
         <div class="form-actions">
           <button class="btn btn-primary" onclick="changeUserPin()" data-i18n="pin_save">💾 Update User PIN</button>
         </div>
-        <div class="admin-note" data-i18n="user_pin_note">The user (M.K Dhadra) signs in with this PIN from the login screen. Default: 1111 — synced to the cloud like the admin PIN.</div>
+        <div class="admin-note" data-i18n="user_pin_note">Each user signs in with their own PIN from the login screen. Default: 1111 — synced to the cloud like the admin PIN.</div>
       </div>
       </div>
 
@@ -891,16 +896,27 @@ function switchTab(tab) {
 const PIN_CLOUD = 'https://textdb.dev/api/data/mizaliz-dhadra-farm-pin-2026-x7q';
 const PIN_SALT = 'dhadra-farm-2026-pin';
 const USER_DEFAULT_PIN = '1111';
+const APP_USERS = [ { id: 'mkdhadra', name: 'M.K Dhadra' }, { id: 'ubaidullah', name: 'UbaidUllah' } ];
 let gateRole = 'admin';
+let gateUser = APP_USERS[0].id;
 let currentUserRole = null;   // 'admin' | 'user'
+let currentUserName = null;
 function currentPin() { return localStorage.getItem('dhadra_admin_pin') || ADMIN_PIN; }
-function currentUserPin() { return localStorage.getItem('dhadra_user_pin') || USER_DEFAULT_PIN; }
+function userPinFor(userId) { return localStorage.getItem('dhadra_user_pin_' + userId) || USER_DEFAULT_PIN; }
 function setGateRole(role) {
   gateRole = role;
   document.getElementById('role-admin-btn').classList.toggle('active', role === 'admin');
   document.getElementById('role-user-btn').classList.toggle('active', role === 'user');
+  const usel = document.getElementById('gate-user-select');
+  if (usel) usel.style.display = role === 'user' ? 'block' : 'none';
   document.getElementById('pin-input').value = '';
   document.getElementById('pin-input').placeholder = role === 'admin' ? 'Admin PIN' : 'User PIN';
+}
+function setGateUser(id) {
+  gateUser = id;
+  document.getElementById('pin-input').value = '';
+  const u = APP_USERS.find(x => x.id === id);
+  document.getElementById('pin-input').placeholder = 'User PIN (' + (u ? u.name : '') + ')';
 }
 async function pinHash(pin) {
   if (!window.crypto || !crypto.subtle) return null;
@@ -942,19 +958,20 @@ function adminUnlock() {
   renderAll();
   if (currentUserRole === 'user') switchAdminTab('sale');
 }
-function setGateRole(role) {
-  gateRole = role;
-  document.getElementById('role-admin-btn').classList.toggle('active', role === 'admin');
-  document.getElementById('role-user-btn').classList.toggle('active', role === 'user');
-  document.getElementById('pin-input').value = '';
+function unlockAsUser(userId) {
+  currentUserRole = 'user';
+  const u = APP_USERS.find(x => x.id === userId);
+  currentUserName = u ? u.name : 'User';
+  adminUnlock();
 }
 function applyRoleUI() {
   document.body.classList.toggle('role-user', currentUserRole === 'user');
   const lockBtn = document.getElementById('lock-btn');
-  if (lockBtn) lockBtn.textContent = '🔒 ' + t('lock_b') + ' (' + (currentUserRole === 'user' ? t('role_user') : t('role_admin')) + ')';
+  const who = currentUserRole === 'user' ? (currentUserName || 'User') : 'Admin';
+  if (lockBtn) lockBtn.textContent = '🔒 ' + 'Lock' + ' — ' + who;
 }
 function lockAdmin() {
-  adminUnlocked = false; currentUserRole = null;
+  adminUnlocked = false; currentUserRole = null; currentUserName = null;
   document.getElementById('admin-content').style.display = 'none';
   document.getElementById('pin-gate').style.display = 'block';
   document.getElementById('pin-input').value = '';
@@ -964,26 +981,27 @@ async function tryPin() {
   const entered = String(document.getElementById('pin-input').value || '').replace(/\s/g, '');
   if (gateRole === 'admin') {
     const devicePin = currentPin();
-    if (entered === devicePin) { currentUserRole = 'admin'; adminUnlock(); return; }
+    if (entered === devicePin) { currentUserRole = 'admin'; currentUserName = 'Admin'; adminUnlock(); return; }
     const cloudHash = await getCloudHash('pinHash');
     if (cloudHash) {
       const enteredHash = await pinHash(entered);
       if (enteredHash && enteredHash === cloudHash) {
-        localStorage.setItem('dhadra_admin_pin', entered);   // one PIN everywhere: self-heal this device
-        currentUserRole = 'admin'; adminUnlock(); return;
+        localStorage.setItem('dhadra_admin_pin', entered);
+        currentUserRole = 'admin'; currentUserName = 'Admin'; adminUnlock(); return;
       }
     }
     if (entered === ADMIN_PIN && devicePin !== ADMIN_PIN) { toast(t('pin_custom_hint')); }
     else { toast(t('toast_pin')); }
   } else {
-    const deviceUserPin = localStorage.getItem('dhadra_user_pin') || USER_DEFAULT_PIN;
-    if (entered === deviceUserPin) { currentUserRole = 'user'; adminUnlock(); return; }
-    const cloudHash = await getCloudHash('userPinHash');
+    const uid = gateUser;
+    const deviceUserPin = userPinFor(uid);
+    if (entered === deviceUserPin) { unlockAsUser(uid); return; }
+    const cloudHash = await getCloudHash('userPinHash_' + uid);
     if (cloudHash) {
       const enteredHash = await pinHash(entered);
       if (enteredHash && enteredHash === cloudHash) {
-        localStorage.setItem('dhadra_user_pin', entered);
-        currentUserRole = 'user'; adminUnlock(); return;
+        localStorage.setItem('dhadra_user_pin_' + uid, entered);
+        unlockAsUser(uid); return;
       }
     }
     toast(t('toast_pin'));
@@ -1002,15 +1020,17 @@ async function changeAdminPin() {
   else { toast(t('pin_ok') + ' — ' + t('pin_cloud_fail')); }
 }
 async function changeUserPin() {
+  const uid = document.getElementById('upin-user') ? document.getElementById('upin-user').value : APP_USERS[0].id;
   const nw = String(document.getElementById('upin-new').value || '').replace(/\s/g, '');
   if (!/^\d{4,6}$/.test(nw)) { toast(t('pin_bad')); return; }
-  localStorage.setItem('dhadra_user_pin', nw);
+  localStorage.setItem('dhadra_user_pin_' + uid, nw);
   document.getElementById('upin-new').value = '';
   const h = await pinHash(nw);
-  if (h && await saveCloudHash('userPinHash', h)) { toast(t('user_pin_ok') + ' ☁'); }
-  else { toast(t('user_pin_ok') + ' — ' + t('pin_cloud_fail')); }
+  const u = APP_USERS.find(x => x.id === uid);
+  const uname = u ? u.name : 'User';
+  if (h && await saveCloudHash('userPinHash_' + uid, h)) { toast('✓ ' + uname + ' PIN updated ☁'); }
+  else { toast('✓ ' + uname + ' PIN updated — ' + t('pin_cloud_fail')); }
 }
-
 /* ============ WHATSAPP ============ */
 
 /* ============ WHATSAPP ============ */
